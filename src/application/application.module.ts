@@ -14,11 +14,19 @@ import {
     UpdateCourseUseCase,
     DeleteCourseUseCase
 } from './use-cases/course';
+import {
+    GetSubjectUseCase,
+    ListSubjectsUseCase,
+    CreateSubjectUseCase,
+    UpdateSubjectUseCase,
+    DeleteSubjectUseCase
+} from './use-cases/subject';
 import { TagModule } from '../tag/tag.module';
 import { DisplayTextModule } from '../display-text/display-text.module';
 import { UsersModule } from '../users/users.module';
 import { CaslModule } from '../casl/casl.module';
 import { CourseModule } from '../course/course.module';
+import { SubjectsModule } from '../subjects/subjects.module';
 
 const useCases = [
     GetUserUseCase,
@@ -30,7 +38,12 @@ const useCases = [
     ListCoursesUseCase,
     CreateCourseUseCase,
     UpdateCourseUseCase,
-    DeleteCourseUseCase
+    DeleteCourseUseCase,
+    GetSubjectUseCase,
+    ListSubjectsUseCase,
+    CreateSubjectUseCase,
+    UpdateSubjectUseCase,
+    DeleteSubjectUseCase
 ];
 
 @Module({
@@ -40,7 +53,8 @@ const useCases = [
         DisplayTextModule,
         forwardRef(() => UsersModule),
         CaslModule,
-        forwardRef(() => CourseModule)
+        forwardRef(() => CourseModule),
+        forwardRef(() => SubjectsModule)
     ],
     providers: useCases,
     exports: useCases
