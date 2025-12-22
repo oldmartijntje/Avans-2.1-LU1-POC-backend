@@ -6,36 +6,36 @@ import { TagService } from '../../../tag/tag.service';
 
 @Injectable()
 export class ListSubjectsUseCase {
-	constructor(
-		@Inject(SUBJECT_REPOSITORY)
-		private readonly subjectRepository: ISubjectRepository,
-		private readonly tagService: TagService,
-	) {}
+    constructor(
+        @Inject(SUBJECT_REPOSITORY)
+        private readonly subjectRepository: ISubjectRepository,
+        private readonly tagService: TagService,
+    ) { }
 
-	async execute(
-		level?: 'NLQF-5' | 'NLQF-6',
-		pointsFilter?: number,
-		tag?: string,
-	): Promise<Subject[]> {
-		const filters: any = {};
+    async execute(
+        level?: 'NLQF-5' | 'NLQF-6',
+        pointsFilter?: number,
+        tag?: string,
+    ): Promise<Subject[]> {
+        const filters: any = {};
 
-		if (level) {
-			filters.level = level;
-		}
+        if (level) {
+            filters.level = level;
+        }
 
-		if (pointsFilter) {
-			filters.pointsFilter = pointsFilter;
-		}
+        if (pointsFilter) {
+            filters.pointsFilter = pointsFilter;
+        }
 
-		if (tag) {
-			const tagDocument = await this.tagService.lookupByName(tag, false);
-			if (tagDocument) {
-				filters.tagId = tagDocument._id.toString();
-			} else {
-				return [];
-			}
-		}
+        if (tag) {
+            const tagDocument = await this.tagService.lookupByName(tag, false);
+            if (tagDocument) {
+                filters.tagId = tagDocument._id.toString();
+            } else {
+                return [];
+            }
+        }
 
-		return await this.subjectRepository.findAll(filters);
-	}
+        return await this.subjectRepository.findAll(filters);
+    }
 }

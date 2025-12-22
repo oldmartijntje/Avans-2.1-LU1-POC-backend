@@ -8,25 +8,25 @@ import { SubjectsService } from '../../../subjects/subjects.service';
 
 @Injectable()
 export class DeleteSubjectUseCase {
-	constructor(
-		@Inject(SUBJECT_REPOSITORY)
-		private readonly subjectRepository: ISubjectRepository,
-		private readonly usersService: UsersService,
-		private readonly caslAbilityFactory: CaslAbilityFactory,
-		private readonly subjectsService: SubjectsService,
-	) {}
+    constructor(
+        @Inject(SUBJECT_REPOSITORY)
+        private readonly subjectRepository: ISubjectRepository,
+        private readonly usersService: UsersService,
+        private readonly caslAbilityFactory: CaslAbilityFactory,
+        private readonly subjectsService: SubjectsService,
+    ) { }
 
-	async execute(uuid: string, userUuid: string): Promise<boolean> {
-		// Get existing subject for authorization
-		const existingSubject = await this.subjectsService.findByUuid(uuid, false);
+    async execute(uuid: string, userUuid: string): Promise<boolean> {
+        // Get existing subject for authorization
+        const existingSubject = await this.subjectsService.findByUuid(uuid, false);
 
-		// Authorization check
-		const user = await this.usersService.findOne(userUuid);
-		const ability = this.caslAbilityFactory.createForUser(user);
-		if (!ability.can(CaslAction.Delete, existingSubject)) {
-			throw new UnauthorizedException();
-		}
+        // Authorization check
+        const user = await this.usersService.findOne(userUuid);
+        const ability = this.caslAbilityFactory.createForUser(user);
+        if (!ability.can(CaslAction.Delete, existingSubject)) {
+            throw new UnauthorizedException();
+        }
 
-		return await this.subjectRepository.delete(uuid);
-	}
+        return await this.subjectRepository.delete(uuid);
+    }
 }

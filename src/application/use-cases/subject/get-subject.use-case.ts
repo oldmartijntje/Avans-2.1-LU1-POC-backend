@@ -5,12 +5,12 @@ import { Subject } from '../../../domain/entities/subject.entity';
 
 @Injectable()
 export class GetSubjectUseCase {
-	constructor(
-		@Inject(SUBJECT_REPOSITORY)
-		private readonly subjectRepository: ISubjectRepository,
-	) {}
+    constructor(
+        @Inject(SUBJECT_REPOSITORY)
+        private readonly subjectRepository: ISubjectRepository,
+    ) { }
 
-	async execute(uuid: string): Promise<Subject> {
-		return await this.subjectRepository.findById(uuid, true);
-	}
+    async execute(uuid: string): Promise<Subject> {
+        return await this.subjectRepository.findById(uuid, true);
+    }
 }
