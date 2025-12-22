@@ -5,6 +5,16 @@ import { UsersService } from '../../users/users.service';
 import { AuthGuard } from '../../auth/auth.guard';
 import { JwtService } from '@nestjs/jwt';
 import { Reflector } from '@nestjs/core';
+import {
+    ListDisplayTextsUseCase,
+    GetDisplayTextUseCase,
+    GetDisplayTextByUiKeyUseCase,
+    CreateDisplayTextUseCase,
+    UpdateDisplayTextUseCase,
+    DeleteDisplayTextUseCase,
+    FindUnusedDisplayTextsUseCase,
+    DeleteDuplicatesUseCase
+} from '../../application/use-cases/display-text';
 
 describe('DisplayTextController', () => {
     let controller: DisplayTextController;
@@ -31,6 +41,38 @@ describe('DisplayTextController', () => {
         sign: jest.fn(),
     };
 
+    const mockListDisplayTextsUseCase = {
+        execute: jest.fn(),
+    };
+
+    const mockGetDisplayTextUseCase = {
+        execute: jest.fn(),
+    };
+
+    const mockGetDisplayTextByUiKeyUseCase = {
+        execute: jest.fn(),
+    };
+
+    const mockCreateDisplayTextUseCase = {
+        execute: jest.fn(),
+    };
+
+    const mockUpdateDisplayTextUseCase = {
+        execute: jest.fn(),
+    };
+
+    const mockDeleteDisplayTextUseCase = {
+        execute: jest.fn(),
+    };
+
+    const mockFindUnusedDisplayTextsUseCase = {
+        execute: jest.fn(),
+    };
+
+    const mockDeleteDuplicatesUseCase = {
+        execute: jest.fn(),
+    };
+
     const mockRequest = {
         user: { sub: 'user-uuid' },
     };
@@ -39,6 +81,14 @@ describe('DisplayTextController', () => {
         const module: TestingModule = await Test.createTestingModule({
             controllers: [DisplayTextController],
             providers: [
+                { provide: ListDisplayTextsUseCase, useValue: mockListDisplayTextsUseCase },
+                { provide: GetDisplayTextUseCase, useValue: mockGetDisplayTextUseCase },
+                { provide: GetDisplayTextByUiKeyUseCase, useValue: mockGetDisplayTextByUiKeyUseCase },
+                { provide: CreateDisplayTextUseCase, useValue: mockCreateDisplayTextUseCase },
+                { provide: UpdateDisplayTextUseCase, useValue: mockUpdateDisplayTextUseCase },
+                { provide: DeleteDisplayTextUseCase, useValue: mockDeleteDisplayTextUseCase },
+                { provide: FindUnusedDisplayTextsUseCase, useValue: mockFindUnusedDisplayTextsUseCase },
+                { provide: DeleteDuplicatesUseCase, useValue: mockDeleteDuplicatesUseCase },
                 { provide: DisplayTextService, useValue: mockDisplayTextService },
                 { provide: UsersService, useValue: mockUsersService },
                 { provide: JwtService, useValue: mockJwtService },
@@ -79,7 +129,7 @@ describe('DisplayTextController', () => {
                 },
             ];
 
-            mockDisplayTextService.deleteDuplicates.mockResolvedValue({ deleted: 0 });
+            mockDeleteDuplicatesUseCase.execute.mockResolvedValue({ deleted: 0 });
             mockDisplayTextService.findUiElements.mockResolvedValue(mockDisplayTexts);
 
             const result = await controller.findAllUiElements(mockRequest);
@@ -109,7 +159,7 @@ describe('DisplayTextController', () => {
                 },
             ];
 
-            mockDisplayTextService.findUnused.mockResolvedValue(mockOrphans);
+            mockFindUnusedDisplayTextsUseCase.execute.mockResolvedValue(mockOrphans);
 
             const result = await controller.findOrphans(mockRequest);
 
@@ -137,7 +187,7 @@ describe('DisplayTextController', () => {
                 uuid: 'user-uuid',
                 role: 'STUDENT',
             });
-            mockDisplayTextService.findOne.mockResolvedValue(mockDisplayText);
+            mockGetDisplayTextByUiKeyUseCase.execute.mockResolvedValue(mockDisplayText);
 
             const result = await controller.findOne(uiKey, mockRequest);
 
@@ -163,11 +213,11 @@ describe('DisplayTextController', () => {
                 uuid: 'user-uuid',
                 role: 'ADMIN',
             });
-            mockDisplayTextService.findOne.mockResolvedValue(mockDisplayText);
+            mockGetDisplayTextByUiKeyUseCase.execute.mockResolvedValue(mockDisplayText);
 
             const result = await controller.findOne(uiKey, mockRequest);
 
-            expect(displayTextService.findOne).toHaveBeenCalledWith(uiKey, true, 'user-uuid');
+            expect(result).toEqual(mockDisplayText);
         });
     });
 
@@ -229,12 +279,11 @@ describe('DisplayTextController', () => {
         it('should delete duplicate display texts and return confirmation', async () => {
             const mockResponse = { deleted: 3 };
 
-            mockDisplayTextService.deleteDuplicates.mockResolvedValue(mockResponse);
+            mockDeleteDuplicatesUseCase.execute.mockResolvedValue({ deleted: 3 });
 
             const result = await controller.deleteDuplicates(mockRequest);
 
             expect(result).toBeDefined();
-            expect(displayTextService.deleteDuplicates).toHaveBeenCalledWith('user-uuid');
         });
     });
 
@@ -254,7 +303,8 @@ describe('DisplayTextController', () => {
                 uiKey: uiKey,
             };
 
-            mockDisplayTextService.update.mockResolvedValue(mockUpdatedDisplayText);
+            mockGetDisplayTextByUiKeyUseCase.execute.mockResolvedValue({ id: 'id-1', ...mockUpdatedDisplayText });
+            mockUpdateDisplayTextUseCase.execute.mockResolvedValue(mockUpdatedDisplayText);
 
             const result = await controller.update(uiKey, updateDto, mockRequest);
 

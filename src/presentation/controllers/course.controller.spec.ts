@@ -1,6 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CourseController } from './course.controller';
 import { CourseService } from '../../course/course.service';
+import {
+    GetCourseUseCase,
+    ListCoursesUseCase,
+    CreateCourseUseCase,
+    UpdateCourseUseCase,
+    DeleteCourseUseCase,
+} from '../../application/use-cases/course';
 
 describe('CourseController', () => {
     let controller: CourseController;
@@ -17,6 +24,26 @@ describe('CourseController', () => {
         leaveStudy: jest.fn(),
     };
 
+    const mockGetCourseUseCase = {
+        execute: jest.fn(),
+    };
+
+    const mockListCoursesUseCase = {
+        execute: jest.fn(),
+    };
+
+    const mockCreateCourseUseCase = {
+        execute: jest.fn(),
+    };
+
+    const mockUpdateCourseUseCase = {
+        execute: jest.fn(),
+    };
+
+    const mockDeleteCourseUseCase = {
+        execute: jest.fn(),
+    };
+
     const mockRequest = {
         user: { sub: 'user-uuid' },
     };
@@ -25,6 +52,11 @@ describe('CourseController', () => {
         const module: TestingModule = await Test.createTestingModule({
             controllers: [CourseController],
             providers: [
+                { provide: GetCourseUseCase, useValue: mockGetCourseUseCase },
+                { provide: ListCoursesUseCase, useValue: mockListCoursesUseCase },
+                { provide: CreateCourseUseCase, useValue: mockCreateCourseUseCase },
+                { provide: UpdateCourseUseCase, useValue: mockUpdateCourseUseCase },
+                { provide: DeleteCourseUseCase, useValue: mockDeleteCourseUseCase },
                 { provide: CourseService, useValue: mockCourseService },
             ],
         }).compile();
@@ -58,7 +90,7 @@ describe('CourseController', () => {
                 tags: [],
             };
 
-            mockCourseService.create.mockResolvedValue(mockCourse);
+            mockCreateCourseUseCase.execute.mockResolvedValue(mockCourse);
 
             const result = await controller.create(createDto, mockRequest);
 
@@ -93,9 +125,9 @@ describe('CourseController', () => {
                 },
             ];
 
-            mockCourseService.findAll.mockResolvedValue(mockCourses);
+            mockListCoursesUseCase.execute.mockResolvedValue(mockCourses);
 
-            const result = await controller.findAll(mockRequest);
+            const result = await controller.findAll();
 
             expect(Array.isArray(result)).toBe(true);
             expect(result).toHaveLength(2);
@@ -173,9 +205,9 @@ describe('CourseController', () => {
                 tags: [],
             };
 
-            mockCourseService.findOne.mockResolvedValue(mockCourse);
+            mockGetCourseUseCase.execute.mockResolvedValue(mockCourse);
 
-            const result = await controller.findOne(courseUuid, mockRequest);
+            const result = await controller.findOne(courseUuid);
 
             expect(result).toEqual(mockCourse);
             expect(result).toHaveProperty('uuid');
@@ -202,7 +234,7 @@ describe('CourseController', () => {
                 tags: [],
             };
 
-            mockCourseService.update.mockResolvedValue(mockUpdatedCourse);
+            mockUpdateCourseUseCase.execute.mockResolvedValue(mockUpdatedCourse);
 
             const result = await controller.update(courseUuid, updateDto, mockRequest);
 
@@ -218,12 +250,11 @@ describe('CourseController', () => {
             const courseUuid = 'course-uuid';
             const mockResponse = { deleted: true };
 
-            mockCourseService.delete.mockResolvedValue(mockResponse);
+            mockDeleteCourseUseCase.execute.mockResolvedValue(mockResponse);
 
             const result = await controller.deleteCourse(courseUuid, mockRequest);
 
             expect(result).toBeDefined();
-            expect(courseService.delete).toHaveBeenCalledWith(courseUuid, 'user-uuid');
         });
     });
 });

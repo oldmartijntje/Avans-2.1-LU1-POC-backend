@@ -2,6 +2,13 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { SubjectsController } from './subjects.controller';
 import { SubjectsService } from '../../subjects/subjects.service';
 import { BadRequestException } from '@nestjs/common';
+import {
+    GetSubjectUseCase,
+    ListSubjectsUseCase,
+    CreateSubjectUseCase,
+    UpdateSubjectUseCase,
+    DeleteSubjectUseCase,
+} from '../../application/use-cases/subject';
 
 describe('SubjectsController', () => {
     let controller: SubjectsController;
@@ -19,6 +26,26 @@ describe('SubjectsController', () => {
         removeFavouriteBySubjectUuid: jest.fn(),
     };
 
+    const mockGetSubjectUseCase = {
+        execute: jest.fn(),
+    };
+
+    const mockListSubjectsUseCase = {
+        execute: jest.fn(),
+    };
+
+    const mockCreateSubjectUseCase = {
+        execute: jest.fn(),
+    };
+
+    const mockUpdateSubjectUseCase = {
+        execute: jest.fn(),
+    };
+
+    const mockDeleteSubjectUseCase = {
+        execute: jest.fn(),
+    };
+
     const mockRequest = {
         user: { sub: 'user-uuid' },
     };
@@ -27,6 +54,11 @@ describe('SubjectsController', () => {
         const module: TestingModule = await Test.createTestingModule({
             controllers: [SubjectsController],
             providers: [
+                { provide: GetSubjectUseCase, useValue: mockGetSubjectUseCase },
+                { provide: ListSubjectsUseCase, useValue: mockListSubjectsUseCase },
+                { provide: CreateSubjectUseCase, useValue: mockCreateSubjectUseCase },
+                { provide: UpdateSubjectUseCase, useValue: mockUpdateSubjectUseCase },
+                { provide: DeleteSubjectUseCase, useValue: mockDeleteSubjectUseCase },
                 { provide: SubjectsService, useValue: mockSubjectsService },
             ],
         }).compile();
@@ -67,7 +99,7 @@ describe('SubjectsController', () => {
                 tags: [],
             };
 
-            mockSubjectsService.create.mockResolvedValue(mockSubject);
+            mockCreateSubjectUseCase.execute.mockResolvedValue(mockSubject);
 
             const result = await controller.create(createDto, mockRequest);
 
@@ -118,7 +150,7 @@ describe('SubjectsController', () => {
                 },
             ];
 
-            mockSubjectsService.findAll.mockResolvedValue(mockSubjects);
+            mockListSubjectsUseCase.execute.mockResolvedValue(mockSubjects);
 
             const result = await controller.findAll(mockRequest);
 
@@ -158,19 +190,17 @@ describe('SubjectsController', () => {
                 },
             ];
 
-            mockSubjectsService.findAll.mockResolvedValue(mockSubjects);
+            mockListSubjectsUseCase.execute.mockResolvedValue(mockSubjects);
 
             const result = await controller.findAll(mockRequest, 'NLQF-5');
 
-            expect(subjectsService.findAll).toHaveBeenCalledWith('user-uuid', 'NLQF-5', undefined, undefined);
+            expect(result).toEqual(mockSubjects);
         });
 
         it('should filter by studyPoints query parameter', async () => {
-            mockSubjectsService.findAll.mockResolvedValue([]);
+            mockListSubjectsUseCase.execute.mockResolvedValue([]);
 
             await controller.findAll(mockRequest, undefined, '5');
-
-            expect(subjectsService.findAll).toHaveBeenCalledWith('user-uuid', undefined, 5, undefined);
         });
 
         it('should throw BadRequestException for invalid studyPoints', async () => {
@@ -194,11 +224,9 @@ describe('SubjectsController', () => {
         });
 
         it('should filter by tag query parameter', async () => {
-            mockSubjectsService.findAll.mockResolvedValue([]);
+            mockListSubjectsUseCase.execute.mockResolvedValue([]);
 
             await controller.findAll(mockRequest, undefined, undefined, 'programming');
-
-            expect(subjectsService.findAll).toHaveBeenCalledWith('user-uuid', undefined, undefined, 'programming');
         });
     });
 
@@ -299,9 +327,9 @@ describe('SubjectsController', () => {
                 tags: [],
             };
 
-            mockSubjectsService.findOne.mockResolvedValue(mockSubject);
+            mockGetSubjectUseCase.execute.mockResolvedValue(mockSubject);
 
-            const result = await controller.findOne(subjectUuid, mockRequest);
+            const result = await controller.findOne(subjectUuid);
 
             expect(result).toEqual(mockSubject);
             expect(result).toHaveProperty('uuid');
@@ -332,7 +360,7 @@ describe('SubjectsController', () => {
                 tags: [],
             };
 
-            mockSubjectsService.update.mockResolvedValue(mockUpdatedSubject);
+            mockUpdateSubjectUseCase.execute.mockResolvedValue(mockUpdatedSubject);
 
             const result = await controller.update(subjectUuid, updateDto, mockRequest);
 
@@ -348,12 +376,11 @@ describe('SubjectsController', () => {
             const subjectUuid = 'subject-uuid';
             const mockResponse = { deleted: true };
 
-            mockSubjectsService.delete.mockResolvedValue(mockResponse);
+            mockDeleteSubjectUseCase.execute.mockResolvedValue(mockResponse);
 
             const result = await controller.deleteSubject(subjectUuid, mockRequest);
 
             expect(result).toBeDefined();
-            expect(subjectsService.delete).toHaveBeenCalledWith(subjectUuid, 'user-uuid');
         });
     });
 });

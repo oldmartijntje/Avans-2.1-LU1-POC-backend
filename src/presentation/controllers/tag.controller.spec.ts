@@ -1,13 +1,37 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TagController } from './tag.controller';
-import { TagService } from './tag.service';
+import {
+    ListTagsUseCase,
+    GetTagUseCase,
+    CreateTagUseCase,
+    DeleteTagUseCase
+} from '../../application/use-cases/tag';
+import { AuthGuard } from '../../auth/auth.guard';
+import { JwtService } from '@nestjs/jwt';
+import { Reflector } from '@nestjs/core';
 
 describe('TagController', () => {
     let controller: TagController;
-    let tagService: TagService;
 
-    const mockTagService = {
-        findAll: jest.fn(),
+    const mockListTagsUseCase = {
+        execute: jest.fn(),
+    };
+
+    const mockGetTagUseCase = {
+        execute: jest.fn(),
+    };
+
+    const mockCreateTagUseCase = {
+        execute: jest.fn(),
+    };
+
+    const mockDeleteTagUseCase = {
+        execute: jest.fn(),
+    };
+
+    const mockJwtService = {
+        verifyAsync: jest.fn(),
+        sign: jest.fn(),
     };
 
     const mockRequest = {
@@ -18,12 +42,17 @@ describe('TagController', () => {
         const module: TestingModule = await Test.createTestingModule({
             controllers: [TagController],
             providers: [
-                { provide: TagService, useValue: mockTagService },
+                { provide: ListTagsUseCase, useValue: mockListTagsUseCase },
+                { provide: GetTagUseCase, useValue: mockGetTagUseCase },
+                { provide: CreateTagUseCase, useValue: mockCreateTagUseCase },
+                { provide: DeleteTagUseCase, useValue: mockDeleteTagUseCase },
+                { provide: JwtService, useValue: mockJwtService },
+                AuthGuard,
+                Reflector,
             ],
         }).compile();
 
         controller = module.get<TagController>(TagController);
-        tagService = module.get<TagService>(TagService);
     });
 
     afterEach(() => {
@@ -51,7 +80,7 @@ describe('TagController', () => {
                 },
             ];
 
-            mockTagService.findAll.mockResolvedValue(mockTags);
+            mockListTagsUseCase.execute.mockResolvedValue(mockTags);
 
             const result = await controller.findAll(mockRequest);
 
@@ -65,7 +94,7 @@ describe('TagController', () => {
         });
 
         it('should return empty array when no tags exist', async () => {
-            mockTagService.findAll.mockResolvedValue([]);
+            mockListTagsUseCase.execute.mockResolvedValue([]);
 
             const result = await controller.findAll(mockRequest);
 
@@ -81,7 +110,7 @@ describe('TagController', () => {
                 },
             ];
 
-            mockTagService.findAll.mockResolvedValue(mockTags);
+            mockListTagsUseCase.execute.mockResolvedValue(mockTags);
 
             // Request without user
             const anonRequest = { user: undefined };
