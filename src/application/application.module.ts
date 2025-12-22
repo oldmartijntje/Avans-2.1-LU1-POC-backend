@@ -21,6 +21,16 @@ import {
     UpdateSubjectUseCase,
     DeleteSubjectUseCase
 } from './use-cases/subject';
+import {
+    GetDisplayTextUseCase,
+    ListDisplayTextsUseCase,
+    GetDisplayTextByUiKeyUseCase,
+    CreateDisplayTextUseCase,
+    UpdateDisplayTextUseCase,
+    DeleteDisplayTextUseCase,
+    FindUnusedDisplayTextsUseCase,
+    DeleteDuplicatesUseCase
+} from './use-cases/display-text';
 import { TagModule } from '../tag/tag.module';
 import { DisplayTextModule } from '../display-text/display-text.module';
 import { UsersModule } from '../users/users.module';
@@ -43,7 +53,15 @@ const useCases = [
     ListSubjectsUseCase,
     CreateSubjectUseCase,
     UpdateSubjectUseCase,
-    DeleteSubjectUseCase
+    DeleteSubjectUseCase,
+    GetDisplayTextUseCase,
+    ListDisplayTextsUseCase,
+    GetDisplayTextByUiKeyUseCase,
+    CreateDisplayTextUseCase,
+    UpdateDisplayTextUseCase,
+    DeleteDisplayTextUseCase,
+    FindUnusedDisplayTextsUseCase,
+    DeleteDuplicatesUseCase
 ];
 
 @Module({

@@ -3,19 +3,23 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from './mongoose/models/user.model';
 import { Course, CourseSchema } from './mongoose/models/course.model';
 import { Subject, SubjectSchema } from './mongoose/models/subject.model';
+import { DisplayText, DisplayTextSchema } from './mongoose/models/display-text.model';
 import { UserRepository } from './mongoose/repositories/user.repository';
 import { CourseRepository } from './mongoose/repositories/course.repository';
 import { SubjectRepository } from './mongoose/repositories/subject.repository';
+import { DisplayTextRepository } from './mongoose/repositories/display-text.repository';
 import { USER_REPOSITORY } from '../../domain/repositories/user-repository.interface';
 import { COURSE_REPOSITORY } from '../../domain/repositories/course-repository.interface';
 import { SUBJECT_REPOSITORY } from '../../domain/repositories/subject-repository.interface';
+import { DISPLAY_TEXT_REPOSITORY } from '../../domain/repositories/display-text-repository.interface';
 
 @Module({
     imports: [
         MongooseModule.forFeature([
             { name: User.name, schema: UserSchema },
             { name: Course.name, schema: CourseSchema },
-            { name: Subject.name, schema: SubjectSchema }
+            { name: Subject.name, schema: SubjectSchema },
+            { name: DisplayText.name, schema: DisplayTextSchema }
         ])
     ],
     providers: [
@@ -30,8 +34,12 @@ import { SUBJECT_REPOSITORY } from '../../domain/repositories/subject-repository
         {
             provide: SUBJECT_REPOSITORY,
             useClass: SubjectRepository
+        },
+        {
+            provide: DISPLAY_TEXT_REPOSITORY,
+            useClass: DisplayTextRepository
         }
     ],
-    exports: [USER_REPOSITORY, COURSE_REPOSITORY, SUBJECT_REPOSITORY]
+    exports: [USER_REPOSITORY, COURSE_REPOSITORY, SUBJECT_REPOSITORY, DISPLAY_TEXT_REPOSITORY]
 })
 export class PersistenceModule { }
