@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { DisplayTextService } from './display-text.service';
 import { DisplayTextController } from './display-text.controller';
 import { DisplayText, DisplayTextSchema } from './schemas/display-text.schema';
@@ -13,7 +13,7 @@ import { Course, CourseSchema } from '../course/schema/course.schema';
         MongooseModule.forFeature([{ name: DisplayText.name, schema: DisplayTextSchema }]),
         MongooseModule.forFeature([{ name: Subject.name, schema: SubjectSchema }]),
         MongooseModule.forFeature([{ name: Course.name, schema: CourseSchema }]),
-        UsersModule
+        forwardRef(() => UsersModule)
     ],
     providers: [
         DisplayTextService,
