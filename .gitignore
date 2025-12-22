@@ -18,7 +18,7 @@ tsconfig.build.tsbuildinfo
 # Tests
 /coverage
 /.nyc_output
-plan.md
+
 # IDEs and editors
 /.idea
 .project
