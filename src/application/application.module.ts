@@ -31,6 +31,13 @@ import {
     FindUnusedDisplayTextsUseCase,
     DeleteDuplicatesUseCase
 } from './use-cases/display-text';
+import {
+    ListTagsUseCase,
+    GetTagUseCase,
+    GetTagByNameUseCase,
+    CreateTagUseCase,
+    DeleteTagUseCase
+} from './use-cases/tag';
 import { TagModule } from '../tag/tag.module';
 import { DisplayTextModule } from '../display-text/display-text.module';
 import { UsersModule } from '../users/users.module';
@@ -61,13 +68,18 @@ const useCases = [
     UpdateDisplayTextUseCase,
     DeleteDisplayTextUseCase,
     FindUnusedDisplayTextsUseCase,
-    DeleteDuplicatesUseCase
+    DeleteDuplicatesUseCase,
+    ListTagsUseCase,
+    GetTagUseCase,
+    GetTagByNameUseCase,
+    CreateTagUseCase,
+    DeleteTagUseCase
 ];
 
 @Module({
     imports: [
         PersistenceModule,
-        TagModule,
+        forwardRef(() => TagModule),
         DisplayTextModule,
         forwardRef(() => UsersModule),
         CaslModule,
