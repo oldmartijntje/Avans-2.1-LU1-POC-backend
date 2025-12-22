@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { DisplayTextController } from './display-text.controller';
-import { DisplayTextService } from './display-text.service';
-import { UsersService } from '../users/users.service';
-import { AuthGuard } from '../auth/auth.guard';
+import { DisplayTextService } from '../../display-text/display-text.service';
+import { UsersService } from '../../users/users.service';
+import { AuthGuard } from '../../auth/auth.guard';
 import { JwtService } from '@nestjs/jwt';
 import { Reflector } from '@nestjs/core';
 

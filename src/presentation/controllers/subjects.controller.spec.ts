@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { SubjectsController } from './subjects.controller';
-import { SubjectsService } from './subjects.service';
+import { SubjectsService } from '../../subjects/subjects.service';
 import { BadRequestException } from '@nestjs/common';
 
 describe('SubjectsController', () => {
