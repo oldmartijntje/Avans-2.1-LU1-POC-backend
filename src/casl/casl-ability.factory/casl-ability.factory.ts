@@ -1,10 +1,11 @@
 import { AbilityBuilder, createMongoAbility, ExtractSubjectType, InferSubjects, MongoAbility } from "@casl/ability";
 import { Injectable } from "@nestjs/common";
 import { CaslAction } from "../dto/caslAction.enum";
-import { Subject } from "../../subjects/schemas/subject.schema";
-import { User } from "../../users/schemas/user.schema";
-import { DisplayText } from "../../display-text/schemas/display-text.schema";
-import { Course } from "../../course/schema/course.schema";
+import { Subject } from "../../domain/entities/subject.entity";
+import { User } from "../../domain/entities/user.entity";
+import { DisplayText } from "../../domain/entities/display-text.entity";
+import { Course } from "../../domain/entities/course.entity";
+import { User as LegacyUser } from "../../users/schemas/user.schema";
 
 
 type Subjects = InferSubjects<typeof Subject | typeof User | typeof Course | typeof DisplayText> | 'all';
@@ -13,7 +14,7 @@ export type AppAbility = MongoAbility<[CaslAction, Subjects]>;
 
 @Injectable()
 export class CaslAbilityFactory {
-    createForUser(user: User) {
+    createForUser(user: User | LegacyUser) {
         const { can, cannot, build } = new AbilityBuilder(createMongoAbility);
 
         if (user.role === "ADMIN") {

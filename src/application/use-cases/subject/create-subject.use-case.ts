@@ -6,7 +6,7 @@ import { Subject } from '../../../domain/entities/subject.entity';
 import { AddSubjectDto } from '../../dto/subject/add-subject.dto';
 import { TagService } from '../../../tag/tag.service';
 import { DisplayTextService } from '../../../display-text/display-text.service';
-import { UsersService } from '../../../users/users.service';
+import { GetUserUseCase } from '../user/get-user.use-case';
 import { CaslAbilityFactory } from '../../../casl/casl-ability.factory/casl-ability.factory';
 import { CaslAction } from '../../../casl/dto/caslAction.enum';
 import { Subject as SubjectSchema } from '../../../subjects/schemas/subject.schema';
@@ -18,13 +18,13 @@ export class CreateSubjectUseCase {
         private readonly subjectRepository: ISubjectRepository,
         private readonly tagService: TagService,
         private readonly displayTextService: DisplayTextService,
-        private readonly usersService: UsersService,
+        private readonly getUserUseCase: GetUserUseCase,
         private readonly caslAbilityFactory: CaslAbilityFactory,
     ) { }
 
     async execute(dto: AddSubjectDto, userUuid: string): Promise<Subject> {
         // Authorization check
-        const user = await this.usersService.findOne(userUuid);
+        const user = await this.getUserUseCase.execute(userUuid);
         const ability = this.caslAbilityFactory.createForUser(user);
         if (!ability.can(CaslAction.Create, SubjectSchema)) {
             throw new UnauthorizedException();

@@ -6,7 +6,7 @@ import { Course } from '../../../domain/entities/course.entity';
 import { AddCourseDto } from '../../dto/course/add-course.dto';
 import { TagService } from '../../../tag/tag.service';
 import { DisplayTextService } from '../../../display-text/display-text.service';
-import { UsersService } from '../../../users/users.service';
+import { GetUserUseCase } from '../user/get-user.use-case';
 import { CaslAbilityFactory } from '../../../casl/casl-ability.factory/casl-ability.factory';
 import { CaslAction } from '../../../casl/dto/caslAction.enum';
 import { Course as CourseSchema } from '../../../course/schema/course.schema';
@@ -18,13 +18,13 @@ export class CreateCourseUseCase {
         private readonly courseRepository: ICourseRepository,
         private readonly tagService: TagService,
         private readonly displayTextService: DisplayTextService,
-        private readonly usersService: UsersService,
+        private readonly getUserUseCase: GetUserUseCase,
         private readonly caslAbilityFactory: CaslAbilityFactory,
     ) { }
 
     async execute(dto: AddCourseDto, userUuid: string): Promise<Course> {
         // Authorization check
-        const user = await this.usersService.findOne(userUuid);
+        const user = await this.getUserUseCase.execute(userUuid);
         const ability = this.caslAbilityFactory.createForUser(user);
         if (!ability.can(CaslAction.Create, CourseSchema)) {
             throw new UnauthorizedException();
