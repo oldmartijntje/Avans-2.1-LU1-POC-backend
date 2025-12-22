@@ -6,8 +6,12 @@ import { UsersModule } from './users/users.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from './auth/auth.module';
 import { CaslModule } from './casl/casl.module';
+import { SubjectsController } from './subjects/subjects.controller';
 import { SubjectsModule } from './subjects/subjects.module';
 import { DisplayTextModule } from './display-text/display-text.module';
+import { UsersController } from './users/users.controller';
+import { DisplayTextController } from './display-text/display-text.controller';
+import { CourseController } from './course/course.controller';
 import { CourseModule } from './course/course.module';
 import { TagModule } from './tag/tag.module';
 
@@ -25,7 +29,7 @@ import { TagModule } from './tag/tag.module';
         CourseModule,
         TagModule,
     ],
-    controllers: [AppController],
+    controllers: [AppController, SubjectsController, CourseController],
     providers: [AppService],
 })
 export class AppModule { }
