@@ -38,7 +38,7 @@ got:
 
 ## course endpoints
 
-### 2. create course
+### 1. create course
 
 http method: POST
 path: `/course`
@@ -149,7 +149,7 @@ got:
 ```
 
 
-### 3. get course
+### 2. get course
 
 http method: GET
 path: `/course`
@@ -275,7 +275,7 @@ got:
 ]
 ```
 
-### 4. get specific course
+### 3. get specific course
 
 http method: GET
 path: `/course/:uuid`
@@ -398,7 +398,7 @@ got:
 ```
 
 
-### 5. delete course
+### 4. delete course
 
 http method: DELETE
 path: `/course/:uuid`
@@ -416,7 +416,7 @@ got:
 true
 ```
 
-### 6. update course
+### 5. update course
 
 http method: PATCH
 path: `/course/:uuid`
@@ -477,3 +477,436 @@ got:
     ]
 }
 ```
+
+### course - what goes well?
+
+- POST to `/course/joined/:uuid` is correct
+- DELETE to `/course/joined/` is correct
+- GET to `/course/joined/` is correct
+
+## subject endpoints
+
+### 1. get a single subject
+
+http method: GET
+path: `/subjects/:uuid`
+
+expected:
+
+```json
+{
+    "_id": "68f901267d954953ea6bde93",
+    "uuid": "71b11e94-e4e9-4526-9c62-7850fcedbeea",
+    "title": {
+        "_id": "68f901257d954953ea6bde8e",
+        "dutch": "Mobiele Applicatie Ontwikkeling",
+        "creatorUuid": "169ad315-039c-4d10-8cde-a0ae5c449d20",
+        "english": "Mobile Application Development",
+        "__v": 0
+    },
+    "description": {
+        "_id": "68f901257d954953ea6bde87",
+        "dutch": "Leer mobiele apps bouwen voor Android en iOS met moderne frameworks.",
+        "creatorUuid": "169ad315-039c-4d10-8cde-a0ae5c449d20",
+        "english": "Learn to build mobile apps for Android and iOS using modern frameworks.",
+        "__v": 0
+    },
+    "ownerUuid": "169ad315-039c-4d10-8cde-a0ae5c449d20",
+    "level": "NLQF-6",
+    "studyPoints": 5,
+    "moreInfo": {
+        "_id": "68f901267d954953ea6bde91",
+        "dutch": "Deze module behandelt cross-platform tools zoals Flutter en React Native.",
+        "creatorUuid": "169ad315-039c-4d10-8cde-a0ae5c449d20",
+        "english": "This module covers cross-platform tools such as Flutter and React Native.",
+        "__v": 0
+    },
+    "languages": [
+        "NL",
+        "EN"
+    ],
+    "tags": [
+        {
+            "_id": "68f278c4074d145b14692152",
+            "tagName": "frontend",
+            "__v": 0
+        },
+        {
+            "_id": "68f901257d954953ea6bde85",
+            "tagName": "react-native",
+            "__v": 0
+        },
+        {
+            "_id": "68f901257d954953ea6bde8b",
+            "tagName": "mobile",
+            "__v": 0
+        },
+        {
+            "_id": "68f901257d954953ea6bde89",
+            "tagName": "flutter",
+            "__v": 0
+        }
+    ],
+    "__v": 0,
+    "isFavourite": false
+}
+```
+got:
+
+```json
+{
+    "uuid": "71b11e94-e4e9-4526-9c62-7850fcedbeea",
+    "titleId": "{\n  _id: new ObjectId('68f901257d954953ea6bde8e'),\n  dutch: 'Mobiele Applicatie Ontwikkeling',\n  creatorUuid: '169ad315-039c-4d10-8cde-a0ae5c449d20',\n  english: 'Mobile Application Development',\n  __v: 0\n}",
+    "descriptionId": "{\n  _id: new ObjectId('68f901257d954953ea6bde87'),\n  dutch: 'Leer mobiele apps bouwen voor Android en iOS met moderne frameworks.',\n  creatorUuid: '169ad315-039c-4d10-8cde-a0ae5c449d20',\n  english: 'Learn to build mobile apps for Android and iOS using modern frameworks.',\n  __v: 0\n}",
+    "ownerUuid": "169ad315-039c-4d10-8cde-a0ae5c449d20",
+    "level": "NLQF-6",
+    "studyPoints": 5,
+    "moreInfoId": "{\n  _id: new ObjectId('68f901267d954953ea6bde91'),\n  dutch: 'Deze module behandelt cross-platform tools zoals Flutter en React Native.',\n  creatorUuid: '169ad315-039c-4d10-8cde-a0ae5c449d20',\n  english: 'This module covers cross-platform tools such as Flutter and React Native.',\n  __v: 0\n}",
+    "languages": [
+        "NL",
+        "EN"
+    ],
+    "tagIds": [
+        "{\n  _id: new ObjectId('68f278c4074d145b14692152'),\n  tagName: 'frontend',\n  __v: 0\n}",
+        "{\n  _id: new ObjectId('68f901257d954953ea6bde85'),\n  tagName: 'react-native',\n  __v: 0\n}",
+        "{\n  _id: new ObjectId('68f901257d954953ea6bde8b'),\n  tagName: 'mobile',\n  __v: 0\n}",
+        "{\n  _id: new ObjectId('68f901257d954953ea6bde89'),\n  tagName: 'flutter',\n  __v: 0\n}"
+    ]
+}
+```
+
+### 2. update subject
+
+http method: PATCH
+path: `/subjects/:uuid`
+
+expected:
+
+```json
+{
+    "_id": "68f902757d954953ea6be3ca",
+    "uuid": "48a04b3e-e9fe-4fd5-b71b-4d9e35da1444",
+    "title": {
+        "_id": "694a7b75ed99af9d7d4dcea8",
+        "dutch": "Je Vader",
+        "english": "Your Father",
+        "creatorUuid": "169ad315-039c-4d10-8cde-a0ae5c449d20",
+        "__v": 0
+    },
+    "description": {
+        "_id": "68f24b09ecb6686bbd665546",
+        "dutch": "Je moeder is een plopkoek",
+        "creatorUuid": "169ad315-039c-4d10-8cde-a0ae5c449d20",
+        "english": "Your mother is a plopcookie",
+        "__v": 0
+    },
+    "ownerUuid": "169ad315-039c-4d10-8cde-a0ae5c449d20",
+    "level": "NLQF-5",
+    "studyPoints": 3,
+    "moreInfo": {
+        "_id": "694a7b75ed99af9d7d4dceab",
+        "dutch": "kaas",
+        "english": "cheese",
+        "creatorUuid": "169ad315-039c-4d10-8cde-a0ae5c449d20",
+        "__v": 0
+    },
+    "languages": [
+        "NL",
+        "EN"
+    ],
+    "tags": [],
+    "__v": 1
+}
+```
+got:
+
+```json
+{
+    "uuid": "48a04b3e-e9fe-4fd5-b71b-4d9e35da1444",
+    "titleId": "{\n  _id: new ObjectId('694a7b75ed99af9d7d4dcea8'),\n  dutch: 'Je Vader',\n  english: 'Your Father',\n  creatorUuid: '169ad315-039c-4d10-8cde-a0ae5c449d20',\n  __v: 0\n}",
+    "descriptionId": "{\n  _id: new ObjectId('68f24b09ecb6686bbd665546'),\n  dutch: 'Je moeder is een plopkoek',\n  creatorUuid: '169ad315-039c-4d10-8cde-a0ae5c449d20',\n  english: 'Your mother is a plopcookie',\n  __v: 0\n}",
+    "ownerUuid": "169ad315-039c-4d10-8cde-a0ae5c449d20",
+    "level": "NLQF-5",
+    "studyPoints": 3,
+    "moreInfoId": "{\n  _id: new ObjectId('694a7b75ed99af9d7d4dceab'),\n  dutch: 'kaas',\n  english: 'cheese',\n  creatorUuid: '169ad315-039c-4d10-8cde-a0ae5c449d20',\n  __v: 0\n}",
+    "languages": [
+        "NL",
+        "EN"
+    ],
+    "tagIds": [
+        "{\n  _id: new ObjectId('68f25b8c58df22f527e91f93'),\n  tagName: 'biology',\n  __v: 0\n}",
+        "{\n  _id: new ObjectId('68f900817d954953ea6bdd44'),\n  tagName: 'psychology',\n  __v: 0\n}",
+        "{\n  _id: new ObjectId('68f902207d954953ea6be1f6'),\n  tagName: 'training',\n  __v: 0\n}",
+        "{\n  _id: new ObjectId('68f900477d954953ea6bdc74'),\n  tagName: 'science',\n  __v: 0\n}",
+        "{\n  _id: new ObjectId('68f25b8c58df22f527e91f91'),\n  tagName: 'nature',\n  __v: 0\n}",
+        "{\n  _id: new ObjectId('68f900477d954953ea6bdc72'),\n  tagName: 'behavior',\n  __v: 0\n}",
+        "{\n  _id: new ObjectId('68f900577d954953ea6bdcaa'),\n  tagName: 'health',\n  __v: 0\n}",
+        "{\n  _id: new ObjectId('68f900477d954953ea6bdc6e'),\n  tagName: 'research',\n  __v: 0\n}",
+        "{\n  _id: new ObjectId('68f901fb7d954953ea6be178'),\n  tagName: 'education',\n  __v: 0\n}",
+        "{\n  _id: new ObjectId('68f902757d954953ea6be3c2'),\n  tagName: 'animals',\n  __v: 0\n}"
+    ]
+}
+```
+
+### 3. get all subjects
+
+http method: GET
+path: `/subjects`
+
+expected:
+
+```json
+[
+    {
+        "_id": "68f27973074d145b14692449",
+        "uuid": "d00502ee-1b6f-441d-804f-8b4487475c1d",
+        "title": {
+            "_id": "68f27973074d145b14692444",
+            "dutch": "Software Ontwikkelen",
+            "creatorUuid": "169ad315-039c-4d10-8cde-a0ae5c449d20",
+            "english": "Software Development",
+            "__v": 0
+        },
+        "description": {
+            "_id": "68f27973074d145b1469243d",
+            "dutch": "Een cursus in het maken van apps en robots",
+            "creatorUuid": "169ad315-039c-4d10-8cde-a0ae5c449d20",
+            "english": "A curses about making apps and robots",
+            "__v": 0
+        },
+        "ownerUuid": "169ad315-039c-4d10-8cde-a0ae5c449d20",
+        "level": "NLQF-6",
+        "studyPoints": 10,
+        "moreInfo": {
+            "_id": "68f29705ff189f3c974e1787",
+            "dutch": "404",
+            "creatorUuid": "169ad315-039c-4d10-8cde-a0ae5c449d20",
+            "english": "404",
+            "__v": 0
+        },
+        "languages": [
+            "EN",
+            "FR"
+        ],
+        "tags": [
+            {
+                "_id": "68f278c4074d145b14692154",
+                "tagName": "experience",
+                "__v": 0
+            },
+            {
+                "_id": "68f27973074d145b1469243f",
+                "tagName": "mariadb",
+                "__v": 0
+            },
+            {
+                "_id": "68f278c4074d145b14692158",
+                "tagName": "backend",
+                "__v": 0
+            },
+            {
+                "_id": "68f27973074d145b14692441",
+                "tagName": "c#",
+                "__v": 0
+            },
+            {
+                "_id": "68f278c4074d145b14692152",
+                "tagName": "frontend",
+                "__v": 0
+            },
+            {
+                "_id": "68f27973074d145b14692439",
+                "tagName": "database",
+                "__v": 0
+            },
+            {
+                "_id": "68f27973074d145b1469243b",
+                "tagName": "sql",
+                "__v": 0
+            },
+            {
+                "_id": "68f27973074d145b14692437",
+                "tagName": "C++",
+                "__v": 0
+            }
+        ],
+        "__v": 1,
+        "isFavourite": true
+    }
+]
+```
+got:
+
+```json
+[
+    {
+        "uuid": "d00502ee-1b6f-441d-804f-8b4487475c1d",
+        "titleId": "{\n  _id: new ObjectId('68f27973074d145b14692444'),\n  dutch: 'Software Ontwikkelen',\n  creatorUuid: '169ad315-039c-4d10-8cde-a0ae5c449d20',\n  english: 'Software Development',\n  __v: 0\n}",
+        "descriptionId": "{\n  _id: new ObjectId('68f27973074d145b1469243d'),\n  dutch: 'Een cursus in het maken van apps en robots',\n  creatorUuid: '169ad315-039c-4d10-8cde-a0ae5c449d20',\n  english: 'A curses about making apps and robots',\n  __v: 0\n}",
+        "ownerUuid": "169ad315-039c-4d10-8cde-a0ae5c449d20",
+        "level": "NLQF-6",
+        "studyPoints": 10,
+        "moreInfoId": "{\n  _id: new ObjectId('68f29705ff189f3c974e1787'),\n  dutch: '404',\n  creatorUuid: '169ad315-039c-4d10-8cde-a0ae5c449d20',\n  english: '404',\n  __v: 0\n}",
+        "languages": [
+            "EN",
+            "FR"
+        ],
+        "tagIds": [
+            "{\n  _id: new ObjectId('68f278c4074d145b14692154'),\n  tagName: 'experience',\n  __v: 0\n}",
+            "{\n  _id: new ObjectId('68f27973074d145b1469243f'),\n  tagName: 'mariadb',\n  __v: 0\n}",
+            "{\n  _id: new ObjectId('68f278c4074d145b14692158'),\n  tagName: 'backend',\n  __v: 0\n}",
+            "{\n  _id: new ObjectId('68f27973074d145b14692441'),\n  tagName: 'c#',\n  __v: 0\n}",
+            "{\n  _id: new ObjectId('68f278c4074d145b14692152'),\n  tagName: 'frontend',\n  __v: 0\n}",
+            "{\n  _id: new ObjectId('68f27973074d145b14692439'),\n  tagName: 'database',\n  __v: 0\n}",
+            "{\n  _id: new ObjectId('68f27973074d145b1469243b'),\n  tagName: 'sql',\n  __v: 0\n}",
+            "{\n  _id: new ObjectId('68f27973074d145b14692437'),\n  tagName: 'C++',\n  __v: 0\n}"
+        ]
+    }
+]
+```
+
+### 4. add subject
+
+http method: POST
+path: `/subjects`
+
+expected:
+
+```json
+{
+    "uuid": "212e6b9c-00cb-4e29-b15c-7d72869dd8ea",
+    "title": {
+        "_id": "68f902757d954953ea6be3c5",
+        "dutch": "Diergedrag en Training",
+        "creatorUuid": "169ad315-039c-4d10-8cde-a0ae5c449d20",
+        "english": "Animal Behavior and Training",
+        "__v": 0
+    },
+    "description": {
+        "_id": "68f902757d954953ea6be3c0",
+        "dutch": "Leer hoe dieren denken, leren en reageren op hun omgeving.",
+        "creatorUuid": "169ad315-039c-4d10-8cde-a0ae5c449d20",
+        "english": "Learn how animals think, learn, and respond to their environment.",
+        "__v": 0
+    },
+    "ownerUuid": "169ad315-039c-4d10-8cde-a0ae5c449d20",
+    "level": "NLQF-5",
+    "studyPoints": 3,
+    "moreInfo": {
+        "_id": "68f902757d954953ea6be3c8",
+        "dutch": "Je leert gedrag interpreteren en trainingstechnieken toepassen.",
+        "creatorUuid": "169ad315-039c-4d10-8cde-a0ae5c449d20",
+        "english": "You’ll learn to interpret behavior and apply training techniques.",
+        "__v": 0
+    },
+    "languages": [
+        "NL",
+        "EN"
+    ],
+    "tags": [
+        {
+            "_id": "68f25b8c58df22f527e91f91",
+            "tagName": "nature",
+            "__v": 0
+        },
+        {
+            "_id": "68f902757d954953ea6be3c2",
+            "tagName": "animals",
+            "__v": 0
+        },
+        {
+            "_id": "68f25b8c58df22f527e91f93",
+            "tagName": "biology",
+            "__v": 0
+        },
+        {
+            "_id": "68f901fb7d954953ea6be178",
+            "tagName": "education",
+            "__v": 0
+        },
+        {
+            "_id": "68f902207d954953ea6be1f6",
+            "tagName": "training",
+            "__v": 0
+        },
+        {
+            "_id": "68f900477d954953ea6bdc6e",
+            "tagName": "research",
+            "__v": 0
+        },
+        {
+            "_id": "68f900577d954953ea6bdcaa",
+            "tagName": "health",
+            "__v": 0
+        },
+        {
+            "_id": "68f900817d954953ea6bdd44",
+            "tagName": "psychology",
+            "__v": 0
+        },
+        {
+            "_id": "68f900477d954953ea6bdc72",
+            "tagName": "behavior",
+            "__v": 0
+        },
+        {
+            "_id": "68f900477d954953ea6bdc74",
+            "tagName": "science",
+            "__v": 0
+        }
+    ],
+    "_id": "694a7d3270f5bba24b3aa5a4",
+    "__v": 0
+}
+```
+got:
+
+```json
+{
+    "uuid": "5fa93d8e-bb3c-47a5-bd0f-147a10bbf0c2",
+    "titleId": "{\n  _id: new ObjectId('68f902757d954953ea6be3c5'),\n  dutch: 'Diergedrag en Training',\n  creatorUuid: '169ad315-039c-4d10-8cde-a0ae5c449d20',\n  english: 'Animal Behavior and Training',\n  __v: 0\n}",
+    "descriptionId": "{\n  _id: new ObjectId('68f902757d954953ea6be3c0'),\n  dutch: 'Leer hoe dieren denken, leren en reageren op hun omgeving.',\n  creatorUuid: '169ad315-039c-4d10-8cde-a0ae5c449d20',\n  english: 'Learn how animals think, learn, and respond to their environment.',\n  __v: 0\n}",
+    "ownerUuid": "169ad315-039c-4d10-8cde-a0ae5c449d20",
+    "level": "NLQF-5",
+    "studyPoints": 3,
+    "moreInfoId": "{\n  _id: new ObjectId('68f902757d954953ea6be3c8'),\n  dutch: 'Je leert gedrag interpreteren en trainingstechnieken toepassen.',\n  creatorUuid: '169ad315-039c-4d10-8cde-a0ae5c449d20',\n  english: 'You’ll learn to interpret behavior and apply training techniques.',\n  __v: 0\n}",
+    "languages": [
+        "NL",
+        "EN"
+    ],
+    "tagIds": [
+        "{\n  _id: new ObjectId('68f902757d954953ea6be3c2'),\n  tagName: 'animals',\n  __v: 0\n}",
+        "{\n  _id: new ObjectId('68f900477d954953ea6bdc72'),\n  tagName: 'behavior',\n  __v: 0\n}",
+        "{\n  _id: new ObjectId('68f902207d954953ea6be1f6'),\n  tagName: 'training',\n  __v: 0\n}",
+        "{\n  _id: new ObjectId('68f25b8c58df22f527e91f93'),\n  tagName: 'biology',\n  __v: 0\n}",
+        "{\n  _id: new ObjectId('68f25b8c58df22f527e91f91'),\n  tagName: 'nature',\n  __v: 0\n}",
+        "{\n  _id: new ObjectId('68f900817d954953ea6bdd44'),\n  tagName: 'psychology',\n  __v: 0\n}",
+        "{\n  _id: new ObjectId('68f901fb7d954953ea6be178'),\n  tagName: 'education',\n  __v: 0\n}",
+        "{\n  _id: new ObjectId('68f900477d954953ea6bdc74'),\n  tagName: 'science',\n  __v: 0\n}",
+        "{\n  _id: new ObjectId('68f900577d954953ea6bdcaa'),\n  tagName: 'health',\n  __v: 0\n}",
+        "{\n  _id: new ObjectId('68f900477d954953ea6bdc6e'),\n  tagName: 'research',\n  __v: 0\n}"
+    ]
+}
+```
+
+### 5. delete subject
+
+http method: DELETE
+path: `/subjects/:uuid`
+
+expected:
+
+```json
+{
+    "message": "Subject deleted successfully"
+}
+```
+got:
+
+```json
+true
+```
+
+### subjects - what goes well?
+
+- GET to `/subjects/reccomended` is correct
