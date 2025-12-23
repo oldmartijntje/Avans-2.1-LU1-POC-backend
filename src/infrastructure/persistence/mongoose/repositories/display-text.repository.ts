@@ -13,41 +13,42 @@ export class DisplayTextRepository implements IDisplayTextRepository {
         private readonly displayTextModel: Model<DisplayTextModel>
     ) { }
 
-    async findAll(): Promise<DisplayTextEntity[]> {
-        const models = await this.displayTextModel.find().exec();
-        return models.map(model => DisplayTextMapper.toDomain(model));
+    async findAll(): Promise<any[]> {
+        // Return raw Mongoose documents to preserve _id and __v
+        return await this.displayTextModel.find().exec();
     }
 
-    async findById(id: string): Promise<DisplayTextEntity | null> {
-        const model = await this.displayTextModel.findById(id).exec();
-        return model ? DisplayTextMapper.toDomain(model) : null;
+    async findById(id: string): Promise<any | null> {
+        // Return raw Mongoose document to preserve _id and __v
+        return await this.displayTextModel.findById(id).exec();
     }
 
-    async findByUiKey(uiKey: string): Promise<DisplayTextEntity | null> {
-        const model = await this.displayTextModel.findOne({ uiKey }).exec();
-        return model ? DisplayTextMapper.toDomain(model) : null;
+    async findByUiKey(uiKey: string): Promise<any | null> {
+        // Return raw Mongoose document to preserve _id and __v
+        return await this.displayTextModel.findOne({ uiKey }).exec();
     }
 
-    async findByUiKeys(uiKeys: string[]): Promise<DisplayTextEntity[]> {
-        const models = await this.displayTextModel.find({ uiKey: { $in: uiKeys } }).exec();
-        return models.map(model => DisplayTextMapper.toDomain(model));
+    async findByUiKeys(uiKeys: string[]): Promise<any[]> {
+        // Return raw Mongoose documents to preserve _id and __v
+        return await this.displayTextModel.find({ uiKey: { $in: uiKeys } }).exec();
     }
 
-    async create(displayText: Omit<DisplayTextEntity, 'id'>): Promise<DisplayTextEntity> {
+    async create(displayText: Omit<DisplayTextEntity, 'id'>): Promise<any> {
         const persistenceData = DisplayTextMapper.toPersistence(displayText);
         const createdModel = new this.displayTextModel(persistenceData);
         const savedModel = await createdModel.save();
-        return DisplayTextMapper.toDomain(savedModel);
+        // Return raw Mongoose document to preserve _id and __v
+        return savedModel;
     }
 
-    async update(id: string, updates: Partial<Omit<DisplayTextEntity, 'id'>>): Promise<DisplayTextEntity | null> {
-        const updatedModel = await this.displayTextModel
+    async update(id: string, updates: Partial<Omit<DisplayTextEntity, 'id'>>): Promise<any | null> {
+        // Return raw Mongoose document to preserve _id and __v
+        return await this.displayTextModel
             .findByIdAndUpdate(id, updates, { new: true })
             .exec();
-        return updatedModel ? DisplayTextMapper.toDomain(updatedModel) : null;
     }
 
-    async massUpdate(updates: Array<{ id: string; updates: Partial<Omit<DisplayTextEntity, 'id'>> }>): Promise<DisplayTextEntity[]> {
+    async massUpdate(updates: Array<{ id: string; updates: Partial<Omit<DisplayTextEntity, 'id'>> }>): Promise<any[]> {
         const bulkOps = updates.map(({ id, updates: updateData }) => ({
             updateOne: {
                 filter: { _id: new Types.ObjectId(id) },
@@ -59,7 +60,8 @@ export class DisplayTextRepository implements IDisplayTextRepository {
 
         const ids = updates.map(u => u.id);
         const updatedModels = await this.displayTextModel.find({ _id: { $in: ids } }).exec();
-        return updatedModels.map(model => DisplayTextMapper.toDomain(model));
+        // Return raw Mongoose documents to preserve _id and __v
+        return updatedModels;
     }
 
     async delete(id: string): Promise<boolean> {
@@ -67,9 +69,9 @@ export class DisplayTextRepository implements IDisplayTextRepository {
         return result !== null;
     }
 
-    async findUnused(): Promise<DisplayTextEntity[]> {
-        const models = await this.displayTextModel.find({ uiKey: { $exists: false } }).exec();
-        return models.map(model => DisplayTextMapper.toDomain(model));
+    async findUnused(): Promise<any[]> {
+        // Return raw Mongoose documents to preserve _id and __v
+        return await this.displayTextModel.find({ uiKey: { $exists: false } }).exec();
     }
 
     async deleteDuplicates(): Promise<void> {

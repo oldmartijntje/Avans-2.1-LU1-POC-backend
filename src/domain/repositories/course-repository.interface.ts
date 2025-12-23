@@ -1,11 +1,11 @@
 import { Course } from '../entities/course.entity';
 
 export interface ICourseRepository {
-    findAll(): Promise<Course[]>;
-    findById(uuid: string, populate: boolean): Promise<Course>;
-    create(course: Course): Promise<Course>;
-    update(uuid: string, data: Partial<Course>): Promise<Course>;
-    delete(uuid: string): Promise<boolean>;
+    findAll(): Promise<any[]>; // Returns raw Mongoose documents
+    findById(uuid: string, populate: boolean): Promise<any>; // Returns raw Mongoose document
+    create(course: Course): Promise<any>; // Returns raw Mongoose document
+    update(uuid: string, data: Partial<Course>): Promise<any>; // Returns raw Mongoose document
+    delete(uuid: string): Promise<any>; // Returns {message: string}
 }
 
 export const COURSE_REPOSITORY = Symbol('ICourseRepository');

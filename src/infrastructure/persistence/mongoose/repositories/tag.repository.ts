@@ -13,9 +13,9 @@ export class TagRepository implements ITagRepository {
         private readonly tagModel: Model<TagModel>
     ) { }
 
-    async findAll(): Promise<TagEntity[]> {
-        const models = await this.tagModel.find().exec();
-        return models.map(model => TagMapper.toDomain(model));
+    async findAll(): Promise<any[]> {
+        // Return raw Mongoose documents to preserve _id and __v fields for API compatibility
+        return await this.tagModel.find().exec();
     }
 
     async findById(id: string): Promise<TagEntity | null> {

@@ -15,17 +15,17 @@ export class CourseRepository implements ICourseRepository {
         private readonly courseModel: Model<CourseModel>,
     ) { }
 
-    async findAll(): Promise<CourseEntity[]> {
-        const models = await this.courseModel
+    async findAll(): Promise<any[]> {
+        // Return raw populated Mongoose documents to preserve _id, __v and nested objects
+        return await this.courseModel
             .find()
             .populate('description')
             .populate('title')
             .populate('tags')
             .exec();
-        return CourseMapper.toDomainArray(models);
     }
 
-    async findById(uuid: string, populate: boolean): Promise<CourseEntity> {
+    async findById(uuid: string, populate: boolean): Promise<any> {
         let model;
         if (populate) {
             model = await this.courseModel
@@ -42,14 +42,10 @@ export class CourseRepository implements ICourseRepository {
             throw new NotFoundException('Course Not Found');
         }
 
-        const course = CourseMapper.toDomain(model);
-        if (!course) {
-            throw new NotFoundException('Course Not Found');
-        }
-        return course;
+        return model;
     }
 
-    async create(course: CourseEntity): Promise<CourseEntity> {
+    async create(course: CourseEntity): Promise<any> {
         const persistenceData = CourseMapper.toPersistence(course);
         const newCourse = new this.courseModel({
             ...persistenceData,
@@ -61,14 +57,11 @@ export class CourseRepository implements ICourseRepository {
         await populated.populate('title');
         await populated.populate('tags');
 
-        const savedCourse = CourseMapper.toDomain(populated);
-        if (!savedCourse) {
-            throw new Error('Failed to create course');
-        }
-        return savedCourse;
+        // Return raw Mongoose document to preserve _id and __v
+        return populated;
     }
 
-    async update(uuid: string, data: Partial<CourseEntity>): Promise<CourseEntity> {
+    async update(uuid: string, data: Partial<CourseEntity>): Promise<any> {
         const existing = await this.courseModel.findOne({ uuid }).exec();
         if (!existing) {
             throw new NotFoundException('Course Not Found');
@@ -92,18 +85,16 @@ export class CourseRepository implements ICourseRepository {
             throw new NotFoundException('Course Not Found');
         }
 
-        const course = CourseMapper.toDomain(updated);
-        if (!course) {
-            throw new NotFoundException('Course Not Found');
-        }
-        return course;
+        // Return raw Mongoose document
+        return updated;
     }
 
-    async delete(uuid: string): Promise<boolean> {
+    async delete(uuid: string): Promise<any> {
         const result = await this.courseModel.deleteOne({ uuid }).exec();
         if (result.deletedCount === 0) {
             throw new NotFoundException('Course Not Found');
         }
-        return true;
+        // Return proper message object instead of boolean
+        return { message: 'Subject deleted successfully' };
     }
 }

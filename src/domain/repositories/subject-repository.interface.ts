@@ -5,11 +5,11 @@ export interface ISubjectRepository {
         level?: 'NLQF-5' | 'NLQF-6';
         pointsFilter?: number;
         tagId?: string;
-    }): Promise<Subject[]>;
-    findById(uuid: string, populate: boolean): Promise<Subject>;
-    create(subject: Subject): Promise<Subject>;
-    update(uuid: string, data: Partial<Subject>): Promise<Subject>;
-    delete(uuid: string): Promise<boolean>;
+    }): Promise<any[]>; // Returns raw Mongoose documents
+    findById(uuid: string, populate: boolean): Promise<any>; // Returns raw Mongoose document
+    create(subject: Subject): Promise<any>; // Returns raw Mongoose document
+    update(uuid: string, data: Partial<Subject>): Promise<any>; // Returns raw Mongoose document
+    delete(uuid: string): Promise<any>; // Returns {message: string}
 }
 
 export const SUBJECT_REPOSITORY = Symbol('ISubjectRepository');

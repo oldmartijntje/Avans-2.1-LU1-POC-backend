@@ -19,7 +19,7 @@ export class SubjectRepository implements ISubjectRepository {
         level?: 'NLQF-5' | 'NLQF-6';
         pointsFilter?: number;
         tagId?: string;
-    }): Promise<SubjectEntity[]> {
+    }): Promise<any[]> {
         const query: any = {};
 
         if (filters?.level) {
@@ -34,18 +34,17 @@ export class SubjectRepository implements ISubjectRepository {
             query.tags = { $in: [filters.tagId] };
         }
 
-        const models = await this.subjectModel
+        // Return raw Mongoose documents to preserve _id and __v
+        return await this.subjectModel
             .find(query)
             .populate('description')
             .populate('title')
             .populate('moreInfo')
             .populate('tags')
             .exec();
-
-        return SubjectMapper.toDomainArray(models);
     }
 
-    async findById(uuid: string, populate: boolean): Promise<SubjectEntity> {
+    async findById(uuid: string, populate: boolean): Promise<any> {
         let model;
         if (populate) {
             model = await this.subjectModel
@@ -63,14 +62,11 @@ export class SubjectRepository implements ISubjectRepository {
             throw new NotFoundException('Subject Not Found');
         }
 
-        const subject = SubjectMapper.toDomain(model);
-        if (!subject) {
-            throw new NotFoundException('Subject Not Found');
-        }
-        return subject;
+        // Return raw Mongoose document to preserve _id and __v
+        return model;
     }
 
-    async create(subject: SubjectEntity): Promise<SubjectEntity> {
+    async create(subject: SubjectEntity): Promise<any> {
         const persistenceData = SubjectMapper.toPersistence(subject);
         const newSubject = new this.subjectModel({
             ...persistenceData,
@@ -83,17 +79,14 @@ export class SubjectRepository implements ISubjectRepository {
         await populated.populate('moreInfo');
         await populated.populate('tags');
 
-        const savedSubject = SubjectMapper.toDomain(populated);
-        if (!savedSubject) {
-            throw new Error('Failed to create subject');
-        }
-        return savedSubject;
+        // Return raw Mongoose document to preserve _id and __v
+        return populated;
     }
 
     async update(
         uuid: string,
         data: Partial<SubjectEntity>,
-    ): Promise<SubjectEntity> {
+    ): Promise<any> {
         const existing = await this.subjectModel.findOne({ uuid }).exec();
         if (!existing) {
             throw new NotFoundException('Subject Not Found');
@@ -124,18 +117,16 @@ export class SubjectRepository implements ISubjectRepository {
             throw new NotFoundException('Subject Not Found');
         }
 
-        const subject = SubjectMapper.toDomain(updated);
-        if (!subject) {
-            throw new NotFoundException('Subject Not Found');
-        }
-        return subject;
+        // Return raw Mongoose document to preserve _id and __v
+        return updated;
     }
 
-    async delete(uuid: string): Promise<boolean> {
+    async delete(uuid: string): Promise<any> {
         const result = await this.subjectModel.deleteOne({ uuid }).exec();
         if (result.deletedCount === 0) {
             throw new NotFoundException('Subject Not Found');
         }
-        return true;
+        // Return proper message object instead of boolean
+        return { message: 'Subject deleted successfully' };
     }
 }

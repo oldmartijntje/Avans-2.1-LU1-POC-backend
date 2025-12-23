@@ -64,19 +64,22 @@ describe('TagController', () => {
     });
 
     describe('GET /tag', () => {
-        it('should return array of tags with correct structure', async () => {
+        it('should return array of tags with correct structure including _id and __v', async () => {
             const mockTags = [
                 {
                     _id: 'tag-id-1',
                     tagName: 'Programming',
+                    __v: 0
                 },
                 {
                     _id: 'tag-id-2',
                     tagName: 'Mathematics',
+                    __v: 0
                 },
                 {
                     _id: 'tag-id-3',
                     tagName: 'Design',
+                    __v: 0
                 },
             ];
 
@@ -88,8 +91,12 @@ describe('TagController', () => {
             expect(result).toHaveLength(3);
 
             result.forEach(tag => {
+                expect(tag).toHaveProperty('_id');
                 expect(tag).toHaveProperty('tagName');
+                expect(tag).toHaveProperty('__v');
                 expect(typeof tag.tagName).toBe('string');
+                expect(typeof tag._id).toBe('string');
+                expect(typeof tag.__v).toBe('number');
             });
         });
 
