@@ -8,52 +8,52 @@ import { DisplayTextService } from '../display-text/display-text.service';
 import { CaslAbilityFactory } from '../casl/casl-ability.factory/casl-ability.factory';
 
 describe('CourseService', () => {
-  let service: CourseService;
+    let service: CourseService;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        CourseService,
-        {
-          provide: getModelToken(Course.name),
-          useValue: {
-            find: jest.fn(),
-            findOne: jest.fn(),
-            create: jest.fn(),
-            exec: jest.fn(),
-          },
-        },
-        {
-          provide: UsersService,
-          useValue: {
-            findOne: jest.fn(),
-          },
-        },
-        {
-          provide: TagService,
-          useValue: {
-            lookupByName: jest.fn(),
-          },
-        },
-        {
-          provide: DisplayTextService,
-          useValue: {
-            createDisplayTextsFromDto: jest.fn(),
-          },
-        },
-        {
-          provide: CaslAbilityFactory,
-          useValue: {
-            createForUser: jest.fn(),
-          },
-        },
-      ],
-    }).compile();
+    beforeEach(async () => {
+        const module: TestingModule = await Test.createTestingModule({
+            providers: [
+                CourseService,
+                {
+                    provide: getModelToken(Course.name),
+                    useValue: {
+                        find: jest.fn(),
+                        findOne: jest.fn(),
+                        create: jest.fn(),
+                        exec: jest.fn(),
+                    },
+                },
+                {
+                    provide: UsersService,
+                    useValue: {
+                        findOne: jest.fn(),
+                    },
+                },
+                {
+                    provide: TagService,
+                    useValue: {
+                        lookupByName: jest.fn(),
+                    },
+                },
+                {
+                    provide: DisplayTextService,
+                    useValue: {
+                        createDisplayTextsFromDto: jest.fn(),
+                    },
+                },
+                {
+                    provide: CaslAbilityFactory,
+                    useValue: {
+                        createForUser: jest.fn(),
+                    },
+                },
+            ],
+        }).compile();
 
-    service = module.get<CourseService>(CourseService);
-  });
+        service = module.get<CourseService>(CourseService);
+    });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
+    it('should be defined', () => {
+        expect(service).toBeDefined();
+    });
 });
