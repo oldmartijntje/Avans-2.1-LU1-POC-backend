@@ -938,3 +938,109 @@ got:
 - POST to `/auth/login` is correct
 - POST to `/auth/register` is correct
 
+## display-text
+
+### 1. get displaytext
+
+http method: GET
+path: `/display-text`
+
+expected:
+
+```json
+{
+    "_id": "694a9f6a70f5bba24b3aa5e3",
+    "dutch": "test.text (nieuw)",
+    "creatorUuid": "169ad315-039c-4d10-8cde-a0ae5c449d20",
+    "english": "test.text (new)",
+    "uiKey": "test.text",
+    "__v": 0
+}
+```
+got:
+
+```json
+{
+    "id": "694a9f6a70f5bba24b3aa5e3",
+    "dutch": "test.text (nieuw)",
+    "english": "test.text (new)",
+    "creatorUuid": "169ad315-039c-4d10-8cde-a0ae5c449d20",
+    "uiKey": "test.text"
+}
+```
+
+### 2. get displaytext orphans
+
+http method: GET
+path: `/display-text/orphans`
+
+expected:
+
+```json
+[]
+```
+because there currently are none.
+
+
+got:
+
+```json
+[
+    {
+        "id": "68f24b09ecb6686bbd665546",
+        "dutch": "Je moeder is een plopkoek",
+        "english": "Your mother is a plopcookie",
+        "creatorUuid": "169ad315-039c-4d10-8cde-a0ae5c449d20"
+    },
+    {
+        "id": "68f27973074d145b1469243d",
+        "dutch": "Een cursus in het maken van apps en robots",
+        "english": "A curses about making apps and robots",
+        "creatorUuid": "169ad315-039c-4d10-8cde-a0ae5c449d20"
+    },
+    {
+        "id": "68f27973074d145b14692444",
+        "dutch": "Software Ontwikkelen",
+        "english": "Software Development",
+        "creatorUuid": "169ad315-039c-4d10-8cde-a0ae5c449d20"
+    }
+]
+```
+
+these are not orphans
+
+### 3. edit UI key
+
+http method: PATCH
+path: `/display-text/:key`
+
+expected:
+
+```json
+{
+    "_id": "694a9f6a70f5bba24b3aa5e3",
+    "dutch": "e",
+    "creatorUuid": "169ad315-039c-4d10-8cde-a0ae5c449d20",
+    "english": "e",
+    "uiKey": "test.text",
+    "__v": 0
+}
+```
+got:
+
+```json
+{
+    "id": "694a9f6a70f5bba24b3aa5e3",
+    "dutch": "e",
+    "english": "e",
+    "creatorUuid": "169ad315-039c-4d10-8cde-a0ae5c449d20",
+    "uiKey": "test.text"
+}
+```
+
+### displaytext - what goes well?
+
+- POST to `/display-text` is correct
+- DELETE to `/display-text/orphans` is correct
+- GET to `/display-text` is correct
+- PATCH to `/display-text` is correct
