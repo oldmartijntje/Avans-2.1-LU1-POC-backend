@@ -907,6 +907,34 @@ got:
 true
 ```
 
+### 1. name
+
+http method: GET
+path: `/endpoint`
+
+expected:
+
+```json
+
+```
+got:
+
+```json
+
+```
+
 ### subjects - what goes well?
 
 - GET to `/subjects/reccomended` is correct
+- GET to `/subjects/favourites` is correct
+- POST to `/subjects/favourite/:uuid` is correct
+- DELETE to `/subjects/favourite/:uuid` is correct
+
+## auth
+
+### auth - what goes well?
+
+- GET to `/auth/profile` is correct
+- POST to `/auth/login` is correct
+- POST to `/auth/register` is correct
+
