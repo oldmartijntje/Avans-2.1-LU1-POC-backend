@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { SubjectsController } from './subjects.controller';
-import { SubjectsService } from '../../subjects/subjects.service';
 import { BadRequestException } from '@nestjs/common';
 import {
     GetSubjectUseCase,
@@ -8,23 +7,14 @@ import {
     CreateSubjectUseCase,
     UpdateSubjectUseCase,
     DeleteSubjectUseCase,
+    AddFavouriteUseCase,
+    RemoveFavouriteUseCase,
+    GetFavouritesUseCase,
+    GetRecommendedSubjectsUseCase,
 } from '../../application/use-cases/subject';
 
 describe('SubjectsController', () => {
     let controller: SubjectsController;
-    let subjectsService: SubjectsService;
-
-    const mockSubjectsService = {
-        create: jest.fn(),
-        findAll: jest.fn(),
-        findOne: jest.fn(),
-        update: jest.fn(),
-        delete: jest.fn(),
-        findFavourites: jest.fn(),
-        findSubjectsBySimilarTags: jest.fn(),
-        addFavouriteBySubjectUuid: jest.fn(),
-        removeFavouriteBySubjectUuid: jest.fn(),
-    };
 
     const mockGetSubjectUseCase = {
         execute: jest.fn(),
@@ -46,6 +36,22 @@ describe('SubjectsController', () => {
         execute: jest.fn(),
     };
 
+    const mockAddFavouriteUseCase = {
+        execute: jest.fn(),
+    };
+
+    const mockRemoveFavouriteUseCase = {
+        execute: jest.fn(),
+    };
+
+    const mockGetFavouritesUseCase = {
+        execute: jest.fn(),
+    };
+
+    const mockGetRecommendedSubjectsUseCase = {
+        execute: jest.fn(),
+    };
+
     const mockRequest = {
         user: { sub: 'user-uuid' },
     };
@@ -59,12 +65,14 @@ describe('SubjectsController', () => {
                 { provide: CreateSubjectUseCase, useValue: mockCreateSubjectUseCase },
                 { provide: UpdateSubjectUseCase, useValue: mockUpdateSubjectUseCase },
                 { provide: DeleteSubjectUseCase, useValue: mockDeleteSubjectUseCase },
-                { provide: SubjectsService, useValue: mockSubjectsService },
+                { provide: AddFavouriteUseCase, useValue: mockAddFavouriteUseCase },
+                { provide: RemoveFavouriteUseCase, useValue: mockRemoveFavouriteUseCase },
+                { provide: GetFavouritesUseCase, useValue: mockGetFavouritesUseCase },
+                { provide: GetRecommendedSubjectsUseCase, useValue: mockGetRecommendedSubjectsUseCase },
             ],
         }).compile();
 
         controller = module.get<SubjectsController>(SubjectsController);
-        subjectsService = module.get<SubjectsService>(SubjectsService);
     });
 
     afterEach(() => {
@@ -247,7 +255,7 @@ describe('SubjectsController', () => {
                 },
             ];
 
-            mockSubjectsService.findFavourites.mockResolvedValue(mockFavourites);
+            mockGetFavouritesUseCase.execute.mockResolvedValue(mockFavourites);
 
             const result = await controller.getFavourites(mockRequest);
 
@@ -276,7 +284,7 @@ describe('SubjectsController', () => {
                 },
             ];
 
-            mockSubjectsService.findSubjectsBySimilarTags.mockResolvedValue(mockRecommended);
+            mockGetRecommendedSubjectsUseCase.execute.mockResolvedValue(mockRecommended);
 
             const result = await controller.findSubjectsBySimilarTags(mockRequest);
 
@@ -289,12 +297,12 @@ describe('SubjectsController', () => {
             const subjectUuid = 'subject-uuid';
             const mockResponse = { success: true };
 
-            mockSubjectsService.addFavouriteBySubjectUuid.mockResolvedValue(mockResponse);
+            mockAddFavouriteUseCase.execute.mockResolvedValue(mockResponse);
 
             const result = await controller.setFavourite(subjectUuid, mockRequest);
 
             expect(result).toBeDefined();
-            expect(subjectsService.addFavouriteBySubjectUuid).toHaveBeenCalledWith('user-uuid', subjectUuid);
+            expect(mockAddFavouriteUseCase.execute).toHaveBeenCalledWith('user-uuid', subjectUuid);
         });
     });
 
@@ -303,12 +311,12 @@ describe('SubjectsController', () => {
             const subjectUuid = 'subject-uuid';
             const mockResponse = { success: true };
 
-            mockSubjectsService.removeFavouriteBySubjectUuid.mockResolvedValue(mockResponse);
+            mockRemoveFavouriteUseCase.execute.mockResolvedValue(mockResponse);
 
             const result = await controller.removeFavourite(subjectUuid, mockRequest);
 
             expect(result).toBeDefined();
-            expect(subjectsService.removeFavouriteBySubjectUuid).toHaveBeenCalledWith('user-uuid', subjectUuid);
+            expect(mockRemoveFavouriteUseCase.execute).toHaveBeenCalledWith('user-uuid', subjectUuid);
         });
     });
 

@@ -27,6 +27,10 @@ import {
     CreateSubjectUseCase,
     UpdateSubjectUseCase,
     DeleteSubjectUseCase,
+    AddFavouriteUseCase,
+    RemoveFavouriteUseCase,
+    GetFavouritesUseCase,
+    GetRecommendedSubjectsUseCase,
 } from '../../application/use-cases/subject';
 import {
     ListDisplayTextsUseCase,
@@ -39,7 +43,6 @@ import {
     DeleteDuplicatesUseCase
 } from '../../application/use-cases/display-text';
 import { CourseService } from '../../course/course.service';
-import { SubjectsService } from '../../subjects/subjects.service';
 import { DisplayTextService } from '../../display-text/display-text.service';
 import { UsersService } from '../../users/users.service';
 import { AuthGuard } from '../../auth/auth.guard';
@@ -81,17 +84,10 @@ describe('API Format Validation', () => {
     const mockCreateSubjectUseCase = { execute: jest.fn() };
     const mockUpdateSubjectUseCase = { execute: jest.fn() };
     const mockDeleteSubjectUseCase = { execute: jest.fn() };
-    const mockSubjectsService = {
-        create: jest.fn(),
-        findAll: jest.fn(),
-        findOne: jest.fn(),
-        update: jest.fn(),
-        delete: jest.fn(),
-        findFavourites: jest.fn(),
-        findSubjectsBySimilarTags: jest.fn(),
-        addFavouriteBySubjectUuid: jest.fn(),
-        removeFavouriteBySubjectUuid: jest.fn(),
-    };
+    const mockAddFavouriteUseCase = { execute: jest.fn() };
+    const mockRemoveFavouriteUseCase = { execute: jest.fn() };
+    const mockGetFavouritesUseCase = { execute: jest.fn() };
+    const mockGetRecommendedSubjectsUseCase = { execute: jest.fn() };
 
     // Mock use cases for DisplayText
     const mockListDisplayTextsUseCase = { execute: jest.fn() };
@@ -139,7 +135,10 @@ describe('API Format Validation', () => {
                 { provide: CreateSubjectUseCase, useValue: mockCreateSubjectUseCase },
                 { provide: UpdateSubjectUseCase, useValue: mockUpdateSubjectUseCase },
                 { provide: DeleteSubjectUseCase, useValue: mockDeleteSubjectUseCase },
-                { provide: SubjectsService, useValue: mockSubjectsService },
+                { provide: AddFavouriteUseCase, useValue: mockAddFavouriteUseCase },
+                { provide: RemoveFavouriteUseCase, useValue: mockRemoveFavouriteUseCase },
+                { provide: GetFavouritesUseCase, useValue: mockGetFavouritesUseCase },
+                { provide: GetRecommendedSubjectsUseCase, useValue: mockGetRecommendedSubjectsUseCase },
                 // DisplayText providers
                 { provide: ListDisplayTextsUseCase, useValue: mockListDisplayTextsUseCase },
                 { provide: GetDisplayTextUseCase, useValue: mockGetDisplayTextUseCase },

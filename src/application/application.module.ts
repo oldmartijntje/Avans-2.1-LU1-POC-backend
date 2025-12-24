@@ -19,7 +19,11 @@ import {
     ListSubjectsUseCase,
     CreateSubjectUseCase,
     UpdateSubjectUseCase,
-    DeleteSubjectUseCase
+    DeleteSubjectUseCase,
+    AddFavouriteUseCase,
+    RemoveFavouriteUseCase,
+    GetFavouritesUseCase,
+    GetRecommendedSubjectsUseCase
 } from './use-cases/subject';
 import {
     GetDisplayTextUseCase,
@@ -62,6 +66,10 @@ const useCases = [
     CreateSubjectUseCase,
     UpdateSubjectUseCase,
     DeleteSubjectUseCase,
+    AddFavouriteUseCase,
+    RemoveFavouriteUseCase,
+    GetFavouritesUseCase,
+    GetRecommendedSubjectsUseCase,
     GetDisplayTextUseCase,
     ListDisplayTextsUseCase,
     GetDisplayTextByUiKeyUseCase,

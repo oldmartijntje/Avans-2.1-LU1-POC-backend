@@ -3,3 +3,7 @@ export * from './list-subjects.use-case';
 export * from './create-subject.use-case';
 export * from './update-subject.use-case';
 export * from './delete-subject.use-case';
+export * from './add-favourite.use-case';
+export * from './remove-favourite.use-case';
+export * from './get-favourites.use-case';
+export * from './get-recommended-subjects.use-case';
