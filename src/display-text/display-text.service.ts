@@ -12,6 +12,7 @@ import { SubjectDocument } from '../subjects/schemas/subject.schema';
 import { Course, CourseDocument } from '../course/schema/course.schema';
 import { UpdateDisplayText } from './dto/update-display-text.dto';
 import { MassUpdateDisplayTextDto, DisplayTextUpdateItem } from './dto/mass-update-display-text.dto';
+import { GetUserUseCase } from '../application/use-cases/user/get-user.use-case';
 
 @Injectable()
 export class DisplayTextService {
@@ -21,7 +22,8 @@ export class DisplayTextService {
         @InjectModel(Subject.name) private subjectModel: Model<SubjectDocument>,
         @InjectModel(Course.name) private courseModel: Model<CourseDocument>,
         private readonly usersService: UsersService,
-        private caslAbilityFactory: CaslAbilityFactory
+        private caslAbilityFactory: CaslAbilityFactory,
+        private readonly getUserUseCase: GetUserUseCase,
     ) { }
 
     findOne(uiKey: string, isAdmin: boolean, userUuid: string): Promise<DisplayText> {
@@ -86,8 +88,8 @@ export class DisplayTextService {
 
     async findUnused(userUuid: string) {
         // this is the logic to check whether it is allowed
-        const user = await this.usersService.findOne(userUuid);
-        const ability = this.caslAbilityFactory.createForUser(user);
+        const domainUser = await this.getUserUseCase.execute(userUuid);
+        const ability = this.caslAbilityFactory.createForUser(domainUser);
         if (!ability.can(CaslAction.Read, DisplayText)) {
             throw new UnauthorizedException();
         }
@@ -122,8 +124,8 @@ export class DisplayTextService {
     }
 
     async deleteUnused(userUuid: string) {
-        const user = await this.usersService.findOne(userUuid);
-        const ability = this.caslAbilityFactory.createForUser(user);
+        const domainUser = await this.getUserUseCase.execute(userUuid);
+        const ability = this.caslAbilityFactory.createForUser(domainUser);
         if (!ability.can(CaslAction.Delete, DisplayText)) {
             throw new UnauthorizedException();
         }
@@ -146,8 +148,8 @@ export class DisplayTextService {
 
     async deleteDuplicates(userUuid: string) {
         // Check if the user has permission to delete
-        const user = await this.usersService.findOne(userUuid);
-        const ability = this.caslAbilityFactory.createForUser(user);
+        const domainUser = await this.getUserUseCase.execute(userUuid);
+        const ability = this.caslAbilityFactory.createForUser(domainUser);
         if (!ability.can(CaslAction.Delete, DisplayText)) {
             throw new UnauthorizedException();
         }
@@ -241,8 +243,8 @@ export class DisplayTextService {
         }
 
         // Check if the user has permission to update
-        const user = await this.usersService.findOne(userUuid);
-        const ability = this.caslAbilityFactory.createForUser(user);
+        const domainUser = await this.getUserUseCase.execute(userUuid);
+        const ability = this.caslAbilityFactory.createForUser(domainUser);
         if (!ability.can(CaslAction.Update, displayText)) {
             throw new UnauthorizedException();
         }
@@ -260,8 +262,8 @@ export class DisplayTextService {
         const errors: any[] = [];
 
         // Check if the user has permission to update
-        const user = await this.usersService.findOne(userUuid);
-        const ability = this.caslAbilityFactory.createForUser(user);
+        const domainUser = await this.getUserUseCase.execute(userUuid);
+        const ability = this.caslAbilityFactory.createForUser(domainUser);
 
         for (const item of uiKeys) {
             try {

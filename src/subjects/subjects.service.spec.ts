@@ -6,6 +6,7 @@ import { UsersService } from '../users/users.service';
 import { TagService } from '../tag/tag.service';
 import { DisplayTextService } from '../display-text/display-text.service';
 import { CaslAbilityFactory } from '../casl/casl-ability.factory/casl-ability.factory';
+import { GetUserUseCase } from '../application/use-cases/user/get-user.use-case';
 
 describe('SubjectsService', () => {
     let service: SubjectsService;
@@ -45,6 +46,12 @@ describe('SubjectsService', () => {
                     provide: CaslAbilityFactory,
                     useValue: {
                         createForUser: jest.fn(),
+                    },
+                },
+                {
+                    provide: GetUserUseCase,
+                    useValue: {
+                        execute: jest.fn(),
                     },
                 },
             ],

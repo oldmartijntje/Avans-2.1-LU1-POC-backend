@@ -4,7 +4,6 @@ import { SUBJECT_REPOSITORY } from '../../../domain/repositories/subject-reposit
 import { GetUserUseCase } from '../user/get-user.use-case';
 import { CaslAbilityFactory } from '../../../casl/casl-ability.factory/casl-ability.factory';
 import { CaslAction } from '../../../casl/dto/caslAction.enum';
-import { SubjectsService } from '../../../subjects/subjects.service';
 
 @Injectable()
 export class DeleteSubjectUseCase {
@@ -13,12 +12,11 @@ export class DeleteSubjectUseCase {
         private readonly subjectRepository: ISubjectRepository,
         private readonly getUserUseCase: GetUserUseCase,
         private readonly caslAbilityFactory: CaslAbilityFactory,
-        private readonly subjectsService: SubjectsService,
     ) { }
 
     async execute(uuid: string, userUuid: string): Promise<boolean> {
         // Get existing subject for authorization
-        const existingSubject = await this.subjectsService.findByUuid(uuid, false);
+        const existingSubject = await this.subjectRepository.findById(uuid, false);
 
         // Authorization check
         const user = await this.getUserUseCase.execute(userUuid);

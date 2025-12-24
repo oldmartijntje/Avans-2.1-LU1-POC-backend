@@ -4,7 +4,6 @@ import { COURSE_REPOSITORY } from '../../../domain/repositories/course-repositor
 import { GetUserUseCase } from '../user/get-user.use-case';
 import { CaslAbilityFactory } from '../../../casl/casl-ability.factory/casl-ability.factory';
 import { CaslAction } from '../../../casl/dto/caslAction.enum';
-import { CourseService } from '../../../course/course.service';
 
 @Injectable()
 export class DeleteCourseUseCase {
@@ -13,12 +12,11 @@ export class DeleteCourseUseCase {
         private readonly courseRepository: ICourseRepository,
         private readonly getUserUseCase: GetUserUseCase,
         private readonly caslAbilityFactory: CaslAbilityFactory,
-        private readonly courseService: CourseService, // Need for authorization check
     ) { }
 
     async execute(uuid: string, userUuid: string): Promise<boolean> {
         // Get existing course for authorization
-        const existingCourse = await this.courseService.findByUuid(uuid, false);
+        const existingCourse = await this.courseRepository.findById(uuid, false);
 
         // Authorization check
         const user = await this.getUserUseCase.execute(userUuid);

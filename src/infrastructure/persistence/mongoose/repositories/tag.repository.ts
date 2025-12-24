@@ -23,16 +23,18 @@ export class TagRepository implements ITagRepository {
         return model ? TagMapper.toDomain(model) : null;
     }
 
-    async findByName(tagName: string): Promise<TagEntity | null> {
+    async findByName(tagName: string): Promise<any | null> {
+        // Return raw Mongoose document to preserve _id and __v fields for API compatibility
         const model = await this.tagModel.findOne({ tagName }).exec();
-        return model ? TagMapper.toDomain(model) : null;
+        return model;
     }
 
-    async create(tag: Omit<TagEntity, 'id'>): Promise<TagEntity> {
+    async create(tag: Omit<TagEntity, 'id'>): Promise<any> {
         const persistenceData = TagMapper.toPersistence(tag);
         const createdModel = new this.tagModel(persistenceData);
         const savedModel = await createdModel.save();
-        return TagMapper.toDomain(savedModel);
+        // Return raw Mongoose document to preserve _id and __v fields for API compatibility
+        return savedModel;
     }
 
     async delete(id: string): Promise<boolean> {

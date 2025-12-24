@@ -6,6 +6,7 @@ import { Subject } from '../subjects/schemas/subject.schema';
 import { Course } from '../course/schema/course.schema';
 import { UsersService } from '../users/users.service';
 import { CaslAbilityFactory } from '../casl/casl-ability.factory/casl-ability.factory';
+import { GetUserUseCase } from '../application/use-cases/user/get-user.use-case';
 
 describe('DisplayTextService', () => {
     let service: DisplayTextService;
@@ -49,6 +50,12 @@ describe('DisplayTextService', () => {
                     provide: CaslAbilityFactory,
                     useValue: {
                         createForUser: jest.fn(),
+                    },
+                },
+                {
+                    provide: GetUserUseCase,
+                    useValue: {
+                        execute: jest.fn(),
                     },
                 },
             ],

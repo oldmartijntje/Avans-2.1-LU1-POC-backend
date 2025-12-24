@@ -6,3 +6,4 @@ export * from './update-display-text.use-case';
 export * from './delete-display-text.use-case';
 export * from './find-unused-display-texts.use-case';
 export * from './delete-duplicates.use-case';
+export * from './lookup-by-translations.use-case';

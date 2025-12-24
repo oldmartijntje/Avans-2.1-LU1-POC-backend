@@ -66,6 +66,17 @@ export class SubjectRepository implements ISubjectRepository {
         return model;
     }
 
+    async findAllDisplayTextReferences(): Promise<Array<{ title: string; description: string; moreInfo: string }>> {
+        return await this.subjectModel
+            .find({}, { title: 1, description: 1, moreInfo: 1 })
+            .exec()
+            .then(docs => docs.map(doc => ({
+                title: doc.title?.toString() || '',
+                description: doc.description?.toString() || '',
+                moreInfo: doc.moreInfo?.toString() || ''
+            })));
+    }
+
     async create(subject: SubjectEntity): Promise<any> {
         const persistenceData = SubjectMapper.toPersistence(subject);
         const newSubject = new this.subjectModel({

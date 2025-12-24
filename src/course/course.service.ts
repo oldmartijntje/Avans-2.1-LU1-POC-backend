@@ -10,6 +10,7 @@ import { DisplayTextService } from '../display-text/display-text.service';
 import { CaslAbilityFactory } from '../casl/casl-ability.factory/casl-ability.factory';
 import { v4 as uuidv4 } from 'uuid';
 import { Model, Types } from 'mongoose';
+import { GetUserUseCase } from '../application/use-cases/user/get-user.use-case';
 
 @Injectable()
 export class CourseService {
@@ -18,13 +19,14 @@ export class CourseService {
         private readonly usersService: UsersService,
         private readonly tagService: TagService,
         private readonly displayTextService: DisplayTextService,
-        private caslAbilityFactory: CaslAbilityFactory
+        private caslAbilityFactory: CaslAbilityFactory,
+        private readonly getUserUseCase: GetUserUseCase,
     ) { }
 
     async create(createCourseDto: AddCourseDto, userUuid: string) {
         // this is the logic to check whether it is allowed
-        const user = await this.usersService.findOne(userUuid);
-        const ability = this.caslAbilityFactory.createForUser(user);
+        const domainUser = await this.getUserUseCase.execute(userUuid);
+        const ability = this.caslAbilityFactory.createForUser(domainUser);
         if (!ability.can(CaslAction.Create, Course)) {
             throw new UnauthorizedException();
         }
@@ -68,8 +70,8 @@ export class CourseService {
         const subject = await this.findByUuid(uuid, true);
 
         // this is the logic to check whether it is allowed
-        const user = await this.usersService.findOne(userUuid);
-        const ability = this.caslAbilityFactory.createForUser(user);
+        const domainUser = await this.getUserUseCase.execute(userUuid);
+        const ability = this.caslAbilityFactory.createForUser(domainUser);
         if (!ability.can(CaslAction.Update, subject)) {
             throw new UnauthorizedException();
         }
@@ -111,8 +113,8 @@ export class CourseService {
         const course = await this.findByUuid(uuid, false);
 
         // this is the logic to check whether it is allowed
-        const user = await this.usersService.findOne(userUuid);
-        const ability = this.caslAbilityFactory.createForUser(user);
+        const domainUser = await this.getUserUseCase.execute(userUuid);
+        const ability = this.caslAbilityFactory.createForUser(domainUser);
         if (!ability.can(CaslAction.Delete, course)) {
             throw new UnauthorizedException();
         }

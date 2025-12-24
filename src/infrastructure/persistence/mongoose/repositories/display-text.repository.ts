@@ -33,6 +33,11 @@ export class DisplayTextRepository implements IDisplayTextRepository {
         return await this.displayTextModel.find({ uiKey: { $in: uiKeys } }).exec();
     }
 
+    async findByTranslations(dutch: string, english: string): Promise<any | null> {
+        // Return raw Mongoose document to preserve _id and __v
+        return await this.displayTextModel.findOne({ dutch, english }).exec();
+    }
+
     async create(displayText: Omit<DisplayTextEntity, 'id'>): Promise<any> {
         const persistenceData = DisplayTextMapper.toPersistence(displayText);
         const createdModel = new this.displayTextModel(persistenceData);

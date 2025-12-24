@@ -1,5 +1,4 @@
 import { Module, forwardRef } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
 import { PersistenceModule } from '../infrastructure/persistence/persistence.module';
 import {
     GetUserUseCase,
@@ -30,7 +29,8 @@ import {
     UpdateDisplayTextUseCase,
     DeleteDisplayTextUseCase,
     FindUnusedDisplayTextsUseCase,
-    DeleteDuplicatesUseCase
+    DeleteDuplicatesUseCase,
+    LookupDisplayTextByTranslationsUseCase
 } from './use-cases/display-text';
 import {
     ListTagsUseCase,
@@ -45,8 +45,6 @@ import { UsersModule } from '../users/users.module';
 import { CaslModule } from '../casl/casl.module';
 import { CourseModule } from '../course/course.module';
 import { SubjectsModule } from '../subjects/subjects.module';
-import { Subject, SubjectSchema } from '../subjects/schemas/subject.schema';
-import { Course, CourseSchema } from '../course/schema/course.schema';
 
 const useCases = [
     GetUserUseCase,
@@ -72,6 +70,7 @@ const useCases = [
     DeleteDisplayTextUseCase,
     FindUnusedDisplayTextsUseCase,
     DeleteDuplicatesUseCase,
+    LookupDisplayTextByTranslationsUseCase,
     ListTagsUseCase,
     GetTagUseCase,
     GetTagByNameUseCase,
@@ -88,8 +87,6 @@ const useCases = [
         CaslModule,
         forwardRef(() => CourseModule),
         forwardRef(() => SubjectsModule),
-        MongooseModule.forFeature([{ name: Subject.name, schema: SubjectSchema }]),
-        MongooseModule.forFeature([{ name: Course.name, schema: CourseSchema }]),
     ],
     providers: useCases,
     exports: useCases
