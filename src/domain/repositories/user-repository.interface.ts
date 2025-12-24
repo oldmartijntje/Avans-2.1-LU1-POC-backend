@@ -10,6 +10,9 @@ export interface IUserRepository {
     delete(uuid: string): Promise<boolean>;
     existsByUsername(username: string): Promise<boolean>;
     existsByEmail(email: string): Promise<boolean>;
+    addFavourite(uuid: string, subjectId: string): Promise<any>; // Returns Mongoose document
+    removeFavourite(uuid: string, subjectId: string): Promise<any>; // Returns Mongoose document
+    getFavouriteIds(uuid: string): Promise<string[]>;
 }
 
 export const USER_REPOSITORY = Symbol('IUserRepository');

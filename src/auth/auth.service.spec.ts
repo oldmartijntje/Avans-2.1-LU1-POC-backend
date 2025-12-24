@@ -1,26 +1,30 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { JwtService } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
-import { UsersService } from '../users/users.service';
+import { LoginUseCase } from '../application/use-cases/auth/login.use-case';
+import { GetProfileUseCase } from '../application/use-cases/auth/get-profile.use-case';
 
 describe('AuthService', () => {
     let service: AuthService;
+
+    const mockLoginUseCase = {
+        execute: jest.fn(),
+    };
+
+    const mockGetProfileUseCase = {
+        execute: jest.fn(),
+    };
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
             providers: [
                 AuthService,
                 {
-                    provide: UsersService,
-                    useValue: {
-                        findOneByNameForAuth: jest.fn(),
-                    },
+                    provide: LoginUseCase,
+                    useValue: mockLoginUseCase,
                 },
                 {
-                    provide: JwtService,
-                    useValue: {
-                        signAsync: jest.fn(),
-                    },
+                    provide: GetProfileUseCase,
+                    useValue: mockGetProfileUseCase,
                 },
             ],
         }).compile();

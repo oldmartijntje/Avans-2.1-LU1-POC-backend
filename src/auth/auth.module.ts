@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { UsersModule } from '../users/users.module';
+import { ApplicationModule } from '../application/application.module';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './constants';
 import * as settings from '../../settings.json';
@@ -11,7 +11,7 @@ console.log('JWT Expiration Config:', settings?.jwtExpirationMinutes);
 
 @Module({
     imports: [
-        UsersModule,
+        ApplicationModule,
         JwtModule.register({
             global: true,
             secret: jwtConstants.secret,

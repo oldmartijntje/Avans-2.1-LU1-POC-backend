@@ -1,7 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { DisplayTextController } from './display-text.controller';
-import { DisplayTextService } from '../../display-text/display-text.service';
-import { UsersService } from '../../users/users.service';
 import { AuthGuard } from '../../auth/auth.guard';
 import { JwtService } from '@nestjs/jwt';
 import { Reflector } from '@nestjs/core';
@@ -13,28 +11,16 @@ import {
     UpdateDisplayTextUseCase,
     DeleteDisplayTextUseCase,
     FindUnusedDisplayTextsUseCase,
-    DeleteDuplicatesUseCase
+    DeleteDuplicatesUseCase,
+    FindUiElementsUseCase,
+    FindAllByUiKeysUseCase,
+    DeleteUnusedUseCase,
+    MassUpdateUseCase
 } from '../../application/use-cases/display-text';
+import { GetUserUseCase } from '../../application/use-cases/user';
 
 describe('DisplayTextController', () => {
     let controller: DisplayTextController;
-    let displayTextService: DisplayTextService;
-    let usersService: UsersService;
-
-    const mockDisplayTextService = {
-        findUiElements: jest.fn(),
-        findOne: jest.fn(),
-        findAll: jest.fn(),
-        update: jest.fn(),
-        massUpdate: jest.fn(),
-        findUnused: jest.fn(),
-        deleteUnused: jest.fn(),
-        deleteDuplicates: jest.fn(),
-    };
-
-    const mockUsersService = {
-        findOne: jest.fn(),
-    };
 
     const mockJwtService = {
         verifyAsync: jest.fn(),
@@ -73,6 +59,26 @@ describe('DisplayTextController', () => {
         execute: jest.fn(),
     };
 
+    const mockFindUiElementsUseCase = {
+        execute: jest.fn(),
+    };
+
+    const mockFindAllByUiKeysUseCase = {
+        execute: jest.fn(),
+    };
+
+    const mockDeleteUnusedUseCase = {
+        execute: jest.fn(),
+    };
+
+    const mockMassUpdateUseCase = {
+        execute: jest.fn(),
+    };
+
+    const mockGetUserUseCase = {
+        execute: jest.fn(),
+    };
+
     const mockRequest = {
         user: { sub: 'user-uuid' },
     };
@@ -89,8 +95,11 @@ describe('DisplayTextController', () => {
                 { provide: DeleteDisplayTextUseCase, useValue: mockDeleteDisplayTextUseCase },
                 { provide: FindUnusedDisplayTextsUseCase, useValue: mockFindUnusedDisplayTextsUseCase },
                 { provide: DeleteDuplicatesUseCase, useValue: mockDeleteDuplicatesUseCase },
-                { provide: DisplayTextService, useValue: mockDisplayTextService },
-                { provide: UsersService, useValue: mockUsersService },
+                { provide: FindUiElementsUseCase, useValue: mockFindUiElementsUseCase },
+                { provide: FindAllByUiKeysUseCase, useValue: mockFindAllByUiKeysUseCase },
+                { provide: DeleteUnusedUseCase, useValue: mockDeleteUnusedUseCase },
+                { provide: MassUpdateUseCase, useValue: mockMassUpdateUseCase },
+                { provide: GetUserUseCase, useValue: mockGetUserUseCase },
                 { provide: JwtService, useValue: mockJwtService },
                 AuthGuard,
                 Reflector,
@@ -98,8 +107,6 @@ describe('DisplayTextController', () => {
         }).compile();
 
         controller = module.get<DisplayTextController>(DisplayTextController);
-        displayTextService = module.get<DisplayTextService>(DisplayTextService);
-        usersService = module.get<UsersService>(UsersService);
     });
 
     afterEach(() => {
@@ -130,7 +137,7 @@ describe('DisplayTextController', () => {
             ];
 
             mockDeleteDuplicatesUseCase.execute.mockResolvedValue({ deleted: 0 });
-            mockDisplayTextService.findUiElements.mockResolvedValue(mockDisplayTexts);
+            mockFindUiElementsUseCase.execute.mockResolvedValue(mockDisplayTexts);
 
             const result = await controller.findAllUiElements(mockRequest);
 
@@ -183,7 +190,7 @@ describe('DisplayTextController', () => {
                 uiKey: uiKey,
             };
 
-            mockUsersService.findOne.mockResolvedValue({
+            mockGetUserUseCase.execute.mockResolvedValue({
                 uuid: 'user-uuid',
                 role: 'STUDENT',
             });
@@ -209,7 +216,7 @@ describe('DisplayTextController', () => {
                 uiKey: uiKey,
             };
 
-            mockUsersService.findOne.mockResolvedValue({
+            mockGetUserUseCase.execute.mockResolvedValue({
                 uuid: 'user-uuid',
                 role: 'ADMIN',
             });
@@ -244,11 +251,11 @@ describe('DisplayTextController', () => {
                 },
             ];
 
-            mockUsersService.findOne.mockResolvedValue({
+            mockGetUserUseCase.execute.mockResolvedValue({
                 uuid: 'user-uuid',
                 role: 'TEACHER',
             });
-            mockDisplayTextService.findAll.mockResolvedValue(mockDisplayTexts);
+            mockFindAllByUiKeysUseCase.execute.mockResolvedValue(mockDisplayTexts);
 
             const result = await controller.findAll(getDisplayTextsDto, mockRequest);
 
@@ -266,12 +273,12 @@ describe('DisplayTextController', () => {
         it('should delete orphaned display texts and return confirmation', async () => {
             const mockResponse = { deleted: 5 };
 
-            mockDisplayTextService.deleteUnused.mockResolvedValue(mockResponse);
+            mockDeleteUnusedUseCase.execute.mockResolvedValue(mockResponse);
 
             const result = await controller.deleteUnused(mockRequest);
 
             expect(result).toBeDefined();
-            expect(displayTextService.deleteUnused).toHaveBeenCalledWith('user-uuid');
+            expect(mockDeleteUnusedUseCase.execute).toHaveBeenCalledWith('user-uuid');
         });
     });
 
@@ -328,12 +335,12 @@ describe('DisplayTextController', () => {
 
             const mockResponse = { updated: 2 };
 
-            mockDisplayTextService.massUpdate.mockResolvedValue(mockResponse);
+            mockMassUpdateUseCase.execute.mockResolvedValue(mockResponse);
 
             const result = await controller.massUpdate(massUpdateDto, mockRequest);
 
             expect(result).toBeDefined();
-            expect(displayTextService.massUpdate).toHaveBeenCalledWith(massUpdateDto, 'user-uuid');
+            expect(mockMassUpdateUseCase.execute).toHaveBeenCalledWith(massUpdateDto, 'user-uuid');
         });
     });
 });

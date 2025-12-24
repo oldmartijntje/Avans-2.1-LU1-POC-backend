@@ -15,11 +15,14 @@ import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
 import { AllowAnon } from './auth.decorator';
 import { CreateUserDto } from '../users/dto/create-user.dto';
-import { UsersService } from '../users/users.service';
+import { RegisterUserUseCase } from '../application/use-cases/auth/register-user.use-case';
 
 @Controller('auth')
 export class AuthController {
-    constructor(private authService: AuthService, private readonly usersService: UsersService) { }
+    constructor(
+        private readonly authService: AuthService,
+        private readonly registerUserUseCase: RegisterUserUseCase
+    ) { }
 
     @AllowAnon()
     @HttpCode(HttpStatus.OK)
@@ -31,11 +34,8 @@ export class AuthController {
     @AllowAnon()
     @HttpCode(HttpStatus.OK)
     @Post('register')
-    signup(@Body(ValidationPipe) createUserDto: CreateUserDto, @Request() req) {
-        if (createUserDto.role === "ADMIN") {
-            throw new UnauthorizedException("You do not have permissions to do this.")
-        }
-        return this.usersService.create(createUserDto);
+    signup(@Body(ValidationPipe) createUserDto: CreateUserDto) {
+        return this.registerUserUseCase.execute(createUserDto);
     }
 
     @UseGuards(AuthGuard)

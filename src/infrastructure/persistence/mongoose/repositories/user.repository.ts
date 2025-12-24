@@ -24,14 +24,6 @@ export class UserRepository implements IUserRepository {
     async findById(uuid: string): Promise<UserEntity> {
         const model = await this.userModel
             .findOne({ uuid })
-            .populate({
-                path: 'study',
-                populate: [
-                    { path: 'description' },
-                    { path: 'title' },
-                    { path: 'tags' }
-                ]
-            })
             .exec();
 
         if (!model) {
@@ -140,5 +132,44 @@ export class UserRepository implements IUserRepository {
     async existsByEmail(email: string): Promise<boolean> {
         const count = await this.userModel.countDocuments({ email }).exec();
         return count > 0;
+    }
+
+    async addFavourite(uuid: string, subjectId: string): Promise<any> {
+        const user = await this.userModel.findOne({ uuid }).exec();
+        if (!user) {
+            throw new NotFoundException('User Not Found');
+        }
+
+        if (!user.favourites.includes(subjectId as any)) {
+            user.favourites.push(subjectId as any);
+            await user.save();
+        }
+
+        // Return raw Mongoose document for API compatibility
+        return user;
+    }
+
+    async removeFavourite(uuid: string, subjectId: string): Promise<any> {
+        const user = await this.userModel.findOne({ uuid }).exec();
+        if (!user) {
+            throw new NotFoundException('User Not Found');
+        }
+
+        user.favourites = user.favourites.filter(
+            (fav) => fav.toString() !== subjectId
+        );
+        await user.save();
+
+        // Return raw Mongoose document for API compatibility
+        return user;
+    }
+
+    async getFavouriteIds(uuid: string): Promise<string[]> {
+        const user = await this.userModel.findOne({ uuid }).exec();
+        if (!user) {
+            throw new NotFoundException('User Not Found');
+        }
+
+        return user.favourites.map(fav => fav.toString());
     }
 }

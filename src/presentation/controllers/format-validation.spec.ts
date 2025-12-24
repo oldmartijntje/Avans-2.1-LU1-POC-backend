@@ -27,6 +27,10 @@ import {
     CreateSubjectUseCase,
     UpdateSubjectUseCase,
     DeleteSubjectUseCase,
+    AddFavouriteUseCase,
+    RemoveFavouriteUseCase,
+    GetFavouritesUseCase,
+    GetRecommendedSubjectsUseCase,
 } from '../../application/use-cases/subject';
 import {
     ListDisplayTextsUseCase,
@@ -36,12 +40,18 @@ import {
     UpdateDisplayTextUseCase,
     DeleteDisplayTextUseCase,
     FindUnusedDisplayTextsUseCase,
-    DeleteDuplicatesUseCase
+    DeleteDuplicatesUseCase,
+    FindUiElementsUseCase,
+    FindAllByUiKeysUseCase,
+    DeleteUnusedUseCase,
+    MassUpdateUseCase,
 } from '../../application/use-cases/display-text';
-import { CourseService } from '../../course/course.service';
-import { SubjectsService } from '../../subjects/subjects.service';
-import { DisplayTextService } from '../../display-text/display-text.service';
-import { UsersService } from '../../users/users.service';
+import { GetUserUseCase } from '../../application/use-cases/user';
+import {
+    JoinStudyUseCase,
+    LeaveStudyUseCase,
+    GetJoinedStudyUseCase,
+} from '../../application/use-cases/course';
 import { AuthGuard } from '../../auth/auth.guard';
 import { JwtService } from '@nestjs/jwt';
 import { Reflector } from '@nestjs/core';
@@ -64,16 +74,9 @@ describe('API Format Validation', () => {
     const mockCreateCourseUseCase = { execute: jest.fn() };
     const mockUpdateCourseUseCase = { execute: jest.fn() };
     const mockDeleteCourseUseCase = { execute: jest.fn() };
-    const mockCourseService = {
-        create: jest.fn(),
-        findAll: jest.fn(),
-        findOne: jest.fn(),
-        update: jest.fn(),
-        delete: jest.fn(),
-        getStudy: jest.fn(),
-        joinStudy: jest.fn(),
-        leaveStudy: jest.fn(),
-    };
+    const mockJoinStudyUseCase = { execute: jest.fn() };
+    const mockLeaveStudyUseCase = { execute: jest.fn() };
+    const mockGetJoinedStudyUseCase = { execute: jest.fn() };
 
     // Mock use cases for Subject
     const mockGetSubjectUseCase = { execute: jest.fn() };
@@ -81,17 +84,10 @@ describe('API Format Validation', () => {
     const mockCreateSubjectUseCase = { execute: jest.fn() };
     const mockUpdateSubjectUseCase = { execute: jest.fn() };
     const mockDeleteSubjectUseCase = { execute: jest.fn() };
-    const mockSubjectsService = {
-        create: jest.fn(),
-        findAll: jest.fn(),
-        findOne: jest.fn(),
-        update: jest.fn(),
-        delete: jest.fn(),
-        findFavourites: jest.fn(),
-        findSubjectsBySimilarTags: jest.fn(),
-        addFavouriteBySubjectUuid: jest.fn(),
-        removeFavouriteBySubjectUuid: jest.fn(),
-    };
+    const mockAddFavouriteUseCase = { execute: jest.fn() };
+    const mockRemoveFavouriteUseCase = { execute: jest.fn() };
+    const mockGetFavouritesUseCase = { execute: jest.fn() };
+    const mockGetRecommendedSubjectsUseCase = { execute: jest.fn() };
 
     // Mock use cases for DisplayText
     const mockListDisplayTextsUseCase = { execute: jest.fn() };
@@ -102,17 +98,11 @@ describe('API Format Validation', () => {
     const mockDeleteDisplayTextUseCase = { execute: jest.fn() };
     const mockFindUnusedDisplayTextsUseCase = { execute: jest.fn() };
     const mockDeleteDuplicatesUseCase = { execute: jest.fn() };
-    const mockDisplayTextService = {
-        findUiElements: jest.fn(),
-        findOne: jest.fn(),
-        findAll: jest.fn(),
-        update: jest.fn(),
-        massUpdate: jest.fn(),
-        findUnused: jest.fn(),
-        deleteUnused: jest.fn(),
-        deleteDuplicates: jest.fn(),
-    };
-    const mockUsersService = { findOne: jest.fn() };
+    const mockFindUiElementsUseCase = { execute: jest.fn() };
+    const mockFindAllByUiKeysUseCase = { execute: jest.fn() };
+    const mockDeleteUnusedUseCase = { execute: jest.fn() };
+    const mockMassUpdateUseCase = { execute: jest.fn() };
+    const mockGetUserUseCase = { execute: jest.fn() };
 
     const mockJwtService = { verifyAsync: jest.fn(), sign: jest.fn() };
     const mockRequest = { user: { sub: 'user-uuid' } };
@@ -132,14 +122,19 @@ describe('API Format Validation', () => {
                 { provide: CreateCourseUseCase, useValue: mockCreateCourseUseCase },
                 { provide: UpdateCourseUseCase, useValue: mockUpdateCourseUseCase },
                 { provide: DeleteCourseUseCase, useValue: mockDeleteCourseUseCase },
-                { provide: CourseService, useValue: mockCourseService },
+                { provide: JoinStudyUseCase, useValue: mockJoinStudyUseCase },
+                { provide: LeaveStudyUseCase, useValue: mockLeaveStudyUseCase },
+                { provide: GetJoinedStudyUseCase, useValue: mockGetJoinedStudyUseCase },
                 // Subject providers
                 { provide: GetSubjectUseCase, useValue: mockGetSubjectUseCase },
                 { provide: ListSubjectsUseCase, useValue: mockListSubjectsUseCase },
                 { provide: CreateSubjectUseCase, useValue: mockCreateSubjectUseCase },
                 { provide: UpdateSubjectUseCase, useValue: mockUpdateSubjectUseCase },
                 { provide: DeleteSubjectUseCase, useValue: mockDeleteSubjectUseCase },
-                { provide: SubjectsService, useValue: mockSubjectsService },
+                { provide: AddFavouriteUseCase, useValue: mockAddFavouriteUseCase },
+                { provide: RemoveFavouriteUseCase, useValue: mockRemoveFavouriteUseCase },
+                { provide: GetFavouritesUseCase, useValue: mockGetFavouritesUseCase },
+                { provide: GetRecommendedSubjectsUseCase, useValue: mockGetRecommendedSubjectsUseCase },
                 // DisplayText providers
                 { provide: ListDisplayTextsUseCase, useValue: mockListDisplayTextsUseCase },
                 { provide: GetDisplayTextUseCase, useValue: mockGetDisplayTextUseCase },
@@ -149,8 +144,11 @@ describe('API Format Validation', () => {
                 { provide: DeleteDisplayTextUseCase, useValue: mockDeleteDisplayTextUseCase },
                 { provide: FindUnusedDisplayTextsUseCase, useValue: mockFindUnusedDisplayTextsUseCase },
                 { provide: DeleteDuplicatesUseCase, useValue: mockDeleteDuplicatesUseCase },
-                { provide: DisplayTextService, useValue: mockDisplayTextService },
-                { provide: UsersService, useValue: mockUsersService },
+                { provide: FindUiElementsUseCase, useValue: mockFindUiElementsUseCase },
+                { provide: FindAllByUiKeysUseCase, useValue: mockFindAllByUiKeysUseCase },
+                { provide: DeleteUnusedUseCase, useValue: mockDeleteUnusedUseCase },
+                { provide: MassUpdateUseCase, useValue: mockMassUpdateUseCase },
+                { provide: GetUserUseCase, useValue: mockGetUserUseCase },
                 // Auth providers
                 { provide: JwtService, useValue: mockJwtService },
                 AuthGuard,
@@ -371,7 +369,7 @@ describe('API Format Validation', () => {
             };
 
             mockGetDisplayTextByUiKeyUseCase.execute.mockResolvedValue(expectedDisplayText);
-            mockUsersService.findOne.mockResolvedValue({ role: 'ADMIN' });
+            mockGetUserUseCase.execute.mockResolvedValue({ role: 'ADMIN' });
 
             const result = await displayTextController.findOne('test.text', mockRequest);
 

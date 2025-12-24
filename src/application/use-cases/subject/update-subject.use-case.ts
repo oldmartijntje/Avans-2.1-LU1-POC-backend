@@ -1,26 +1,23 @@
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
-import { Types } from 'mongoose';
 import type { ISubjectRepository } from '../../../domain/repositories/subject-repository.interface';
 import { SUBJECT_REPOSITORY } from '../../../domain/repositories/subject-repository.interface';
 import { Subject } from '../../../domain/entities/subject.entity';
 import { UpdateSubjectDto } from '../../dto/subject/update-subject.dto';
-import { TagService } from '../../../tag/tag.service';
-import { DisplayTextService } from '../../../display-text/display-text.service';
+import { GetTagByNameUseCase } from '../tag/get-tag-by-name.use-case';
+import { LookupDisplayTextByTranslationsUseCase } from '../display-text/lookup-by-translations.use-case';
 import { GetUserUseCase } from '../user/get-user.use-case';
 import { CaslAbilityFactory } from '../../../casl/casl-ability.factory/casl-ability.factory';
 import { CaslAction } from '../../../casl/dto/caslAction.enum';
-import { SubjectsService } from '../../../subjects/subjects.service';
 
 @Injectable()
 export class UpdateSubjectUseCase {
     constructor(
         @Inject(SUBJECT_REPOSITORY)
         private readonly subjectRepository: ISubjectRepository,
-        private readonly tagService: TagService,
-        private readonly displayTextService: DisplayTextService,
+        private readonly getTagByNameUseCase: GetTagByNameUseCase,
+        private readonly lookupDisplayTextUseCase: LookupDisplayTextByTranslationsUseCase,
         private readonly getUserUseCase: GetUserUseCase,
         private readonly caslAbilityFactory: CaslAbilityFactory,
-        private readonly subjectsService: SubjectsService,
     ) { }
 
     async execute(
@@ -29,7 +26,7 @@ export class UpdateSubjectUseCase {
         userUuid: string,
     ): Promise<Subject> {
         // Get existing subject for authorization
-        const existingSubject = await this.subjectsService.findByUuid(uuid, true);
+        const existingSubject = await this.subjectRepository.findById(uuid, true);
 
         // Authorization check
         const user = await this.getUserUseCase.execute(userUuid);
@@ -39,13 +36,13 @@ export class UpdateSubjectUseCase {
         }
 
         // Process tags if provided
-        let newTagsArray: Types.ObjectId[] | undefined;
+        let newTagsArray: string[] | undefined;
         if (dto.tags) {
             newTagsArray = [];
             for (const tagName of dto.tags) {
-                const tag = await this.tagService.lookupByName(tagName, true);
-                if (tag) {
-                    newTagsArray.push(tag);
+                const tag = await this.getTagByNameUseCase.execute(tagName, true);
+                if (tag && tag._id) {
+                    newTagsArray.push(tag._id.toString());
                 }
             }
         }
@@ -64,19 +61,19 @@ export class UpdateSubjectUseCase {
 
         // Update display texts
         const updatedDescription =
-            await this.displayTextService.lookupByTranslations(
+            await this.lookupDisplayTextUseCase.execute(
                 descriptionNL,
                 descriptionEN,
                 true,
                 userUuid,
             );
-        const updatedTitle = await this.displayTextService.lookupByTranslations(
+        const updatedTitle = await this.lookupDisplayTextUseCase.execute(
             titleNL,
             titleEN,
             true,
             userUuid,
         );
-        const updatedMoreInfo = await this.displayTextService.lookupByTranslations(
+        const updatedMoreInfo = await this.lookupDisplayTextUseCase.execute(
             moreInfoNL,
             moreInfoEN,
             true,
@@ -84,14 +81,14 @@ export class UpdateSubjectUseCase {
         );
 
         const updates: Partial<Subject> = {};
-        if (updatedTitle) updates.titleId = updatedTitle.toString();
+        if (updatedTitle) updates.titleId = updatedTitle._id?.toString() || '';
         if (updatedDescription)
-            updates.descriptionId = updatedDescription.toString();
-        if (updatedMoreInfo) updates.moreInfoId = updatedMoreInfo.toString();
+            updates.descriptionId = updatedDescription._id?.toString() || '';
+        if (updatedMoreInfo) updates.moreInfoId = updatedMoreInfo._id?.toString() || '';
         if (dto.level) updates.level = dto.level;
         if (dto.studyPoints !== undefined) updates.studyPoints = dto.studyPoints;
         if (dto.languages) updates.languages = dto.languages;
-        if (newTagsArray) updates.tagIds = newTagsArray.map((t) => t.toString());
+        if (newTagsArray) updates.tagIds = newTagsArray;
 
         return await this.subjectRepository.update(uuid, updates);
     }

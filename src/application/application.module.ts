@@ -1,5 +1,4 @@
 import { Module, forwardRef } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
 import { PersistenceModule } from '../infrastructure/persistence/persistence.module';
 import {
     GetUserUseCase,
@@ -13,14 +12,21 @@ import {
     ListCoursesUseCase,
     CreateCourseUseCase,
     UpdateCourseUseCase,
-    DeleteCourseUseCase
+    DeleteCourseUseCase,
+    JoinStudyUseCase,
+    LeaveStudyUseCase,
+    GetJoinedStudyUseCase
 } from './use-cases/course';
 import {
     GetSubjectUseCase,
     ListSubjectsUseCase,
     CreateSubjectUseCase,
     UpdateSubjectUseCase,
-    DeleteSubjectUseCase
+    DeleteSubjectUseCase,
+    AddFavouriteUseCase,
+    RemoveFavouriteUseCase,
+    GetFavouritesUseCase,
+    GetRecommendedSubjectsUseCase
 } from './use-cases/subject';
 import {
     GetDisplayTextUseCase,
@@ -30,7 +36,12 @@ import {
     UpdateDisplayTextUseCase,
     DeleteDisplayTextUseCase,
     FindUnusedDisplayTextsUseCase,
-    DeleteDuplicatesUseCase
+    DeleteDuplicatesUseCase,
+    LookupDisplayTextByTranslationsUseCase,
+    FindUiElementsUseCase,
+    FindAllByUiKeysUseCase,
+    DeleteUnusedUseCase,
+    MassUpdateUseCase
 } from './use-cases/display-text';
 import {
     ListTagsUseCase,
@@ -39,14 +50,14 @@ import {
     CreateTagUseCase,
     DeleteTagUseCase
 } from './use-cases/tag';
-import { TagModule } from '../tag/tag.module';
-import { DisplayTextModule } from '../display-text/display-text.module';
-import { UsersModule } from '../users/users.module';
+import {
+    LoginUseCase,
+    RegisterUserUseCase,
+    GetProfileUseCase
+} from './use-cases/auth';
+import { JwtModule } from '@nestjs/jwt';
+import { jwtConstants } from '../auth/constants';
 import { CaslModule } from '../casl/casl.module';
-import { CourseModule } from '../course/course.module';
-import { SubjectsModule } from '../subjects/subjects.module';
-import { Subject, SubjectSchema } from '../subjects/schemas/subject.schema';
-import { Course, CourseSchema } from '../course/schema/course.schema';
 
 const useCases = [
     GetUserUseCase,
@@ -59,11 +70,18 @@ const useCases = [
     CreateCourseUseCase,
     UpdateCourseUseCase,
     DeleteCourseUseCase,
+    JoinStudyUseCase,
+    LeaveStudyUseCase,
+    GetJoinedStudyUseCase,
     GetSubjectUseCase,
     ListSubjectsUseCase,
     CreateSubjectUseCase,
     UpdateSubjectUseCase,
     DeleteSubjectUseCase,
+    AddFavouriteUseCase,
+    RemoveFavouriteUseCase,
+    GetFavouritesUseCase,
+    GetRecommendedSubjectsUseCase,
     GetDisplayTextUseCase,
     ListDisplayTextsUseCase,
     GetDisplayTextByUiKeyUseCase,
@@ -72,24 +90,30 @@ const useCases = [
     DeleteDisplayTextUseCase,
     FindUnusedDisplayTextsUseCase,
     DeleteDuplicatesUseCase,
+    LookupDisplayTextByTranslationsUseCase,
+    FindUiElementsUseCase,
+    FindAllByUiKeysUseCase,
+    DeleteUnusedUseCase,
+    MassUpdateUseCase,
     ListTagsUseCase,
     GetTagUseCase,
     GetTagByNameUseCase,
     CreateTagUseCase,
-    DeleteTagUseCase
+    DeleteTagUseCase,
+    LoginUseCase,
+    RegisterUserUseCase,
+    GetProfileUseCase
 ];
 
 @Module({
     imports: [
         PersistenceModule,
-        forwardRef(() => TagModule),
-        DisplayTextModule,
-        forwardRef(() => UsersModule),
+        JwtModule.register({
+            global: true,
+            secret: jwtConstants.secret,
+            signOptions: { expiresIn: '1d' },
+        }),
         CaslModule,
-        forwardRef(() => CourseModule),
-        forwardRef(() => SubjectsModule),
-        MongooseModule.forFeature([{ name: Subject.name, schema: SubjectSchema }]),
-        MongooseModule.forFeature([{ name: Course.name, schema: CourseSchema }]),
     ],
     providers: useCases,
     exports: useCases

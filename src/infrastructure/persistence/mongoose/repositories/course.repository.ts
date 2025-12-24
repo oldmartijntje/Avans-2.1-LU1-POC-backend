@@ -45,6 +45,16 @@ export class CourseRepository implements ICourseRepository {
         return model;
     }
 
+    async findAllDisplayTextReferences(): Promise<Array<{ title: string; description: string }>> {
+        return await this.courseModel
+            .find({}, { title: 1, description: 1 })
+            .exec()
+            .then(docs => docs.map(doc => ({
+                title: doc.title?.toString() || '',
+                description: doc.description?.toString() || ''
+            })));
+    }
+
     async create(course: CourseEntity): Promise<any> {
         const persistenceData = CourseMapper.toPersistence(course);
         const newCourse = new this.courseModel({

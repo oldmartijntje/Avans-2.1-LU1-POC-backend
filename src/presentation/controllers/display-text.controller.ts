@@ -1,8 +1,6 @@
 import { Controller, Get, Post, Patch, Delete, Param, Body, Request, UseGuards, ValidationPipe, BadRequestException } from '@nestjs/common';
 import { AllowAnon } from '../../auth/auth.decorator';
 import { AuthGuard } from '../../auth/auth.guard';
-import { DisplayTextService } from '../../display-text/display-text.service';
-import { UsersService } from '../../users/users.service';
 import {
     ListDisplayTextsUseCase,
     GetDisplayTextUseCase,
@@ -11,8 +9,13 @@ import {
     UpdateDisplayTextUseCase,
     DeleteDisplayTextUseCase,
     FindUnusedDisplayTextsUseCase,
-    DeleteDuplicatesUseCase
+    DeleteDuplicatesUseCase,
+    FindUiElementsUseCase,
+    FindAllByUiKeysUseCase,
+    DeleteUnusedUseCase,
+    MassUpdateUseCase
 } from '../../application/use-cases/display-text';
+import { GetUserUseCase } from '../../application/use-cases/user';
 import { CreateDisplayTextDto } from '../../application/dto/display-text/create-display-text.dto';
 import { UpdateDisplayTextDto } from '../../application/dto/display-text/update-display-text.dto';
 import { GetDisplayTextsDto } from '../../display-text/dto/get-display-texts.dto';
@@ -30,14 +33,17 @@ export class DisplayTextController {
         private readonly deleteDisplayTextUseCase: DeleteDisplayTextUseCase,
         private readonly findUnusedDisplayTextsUseCase: FindUnusedDisplayTextsUseCase,
         private readonly deleteDuplicatesUseCase: DeleteDuplicatesUseCase,
-        private readonly displayTextService: DisplayTextService,
-        private readonly usersService: UsersService
+        private readonly findUiElementsUseCase: FindUiElementsUseCase,
+        private readonly findAllByUiKeysUseCase: FindAllByUiKeysUseCase,
+        private readonly deleteUnusedUseCase: DeleteUnusedUseCase,
+        private readonly massUpdateUseCase: MassUpdateUseCase,
+        private readonly getUserUseCase: GetUserUseCase,
     ) { }
 
     @Get()
     async findAllUiElements(@Request() req) {
         await this.deleteDuplicatesUseCase.execute();
-        return this.displayTextService.findUiElements();
+        return this.findUiElementsUseCase.execute();
     }
 
     @Get('orphans')
@@ -50,7 +56,7 @@ export class DisplayTextController {
     async findOne(@Param('key') uiKey: string, @Request() req) {
         let isAdmin = false;
         try {
-            const user = await this.usersService.findOne(req.user?.sub);
+            const user = await this.getUserUseCase.execute(req.user?.sub);
             if (user) {
                 isAdmin = user.role === "ADMIN";
             }
@@ -65,19 +71,19 @@ export class DisplayTextController {
     async findAll(@Body(ValidationPipe) getDisplayTextsDto: GetDisplayTextsDto, @Request() req) {
         let isAdmin = false;
         try {
-            const user = await this.usersService.findOne(req.user?.sub);
+            const user = await this.getUserUseCase.execute(req.user?.sub);
             if (user) {
                 isAdmin = user.role === "ADMIN";
             }
         } catch (e) {
             // User not found or not authenticated
         }
-        return this.displayTextService.findAll(getDisplayTextsDto, isAdmin, req.user?.sub);
+        return this.findAllByUiKeysUseCase.execute(getDisplayTextsDto, isAdmin, req.user?.sub);
     }
 
     @Delete('orphans')
     async deleteUnused(@Request() req) {
-        return this.displayTextService.deleteUnused(req.user?.sub);
+        return this.deleteUnusedUseCase.execute(req.user?.sub);
     }
 
     @Delete('duplicates')
@@ -104,6 +110,6 @@ export class DisplayTextController {
         @Body(ValidationPipe) massUpdateDisplayTextDto: MassUpdateDisplayTextDto,
         @Request() req
     ) {
-        return this.displayTextService.massUpdate(massUpdateDisplayTextDto, req.user?.sub);
+        return this.massUpdateUseCase.execute(massUpdateDisplayTextDto, req.user?.sub);
     }
 }

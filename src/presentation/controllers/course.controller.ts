@@ -18,8 +18,10 @@ import {
     CreateCourseUseCase,
     UpdateCourseUseCase,
     DeleteCourseUseCase,
+    JoinStudyUseCase,
+    LeaveStudyUseCase,
+    GetJoinedStudyUseCase,
 } from '../../application/use-cases/course';
-import { CourseService } from '../../course/course.service';
 
 @Controller('course')
 export class CourseController {
@@ -29,7 +31,9 @@ export class CourseController {
         private readonly createCourseUseCase: CreateCourseUseCase,
         private readonly updateCourseUseCase: UpdateCourseUseCase,
         private readonly deleteCourseUseCase: DeleteCourseUseCase,
-        private readonly courseService: CourseService, // Keep for joined study operations
+        private readonly joinStudyUseCase: JoinStudyUseCase,
+        private readonly leaveStudyUseCase: LeaveStudyUseCase,
+        private readonly getJoinedStudyUseCase: GetJoinedStudyUseCase,
     ) { }
 
     @Post()
@@ -50,17 +54,17 @@ export class CourseController {
 
     @Get('joined')
     async findJoined(@Request() req) {
-        return this.courseService.getStudy(req.user?.sub);
+        return this.getJoinedStudyUseCase.execute(req.user?.sub);
     }
 
     @Post('joined/:uuid')
     async join(@Param('uuid') uuid: string, @Request() req) {
-        return this.courseService.joinStudy(req.user?.sub, uuid);
+        return this.joinStudyUseCase.execute(req.user?.sub, uuid);
     }
 
     @Delete('joined')
     async leave(@Request() req) {
-        return this.courseService.leaveStudy(req.user?.sub);
+        return this.leaveStudyUseCase.execute(req.user?.sub);
     }
 
     @Get(':uuid')

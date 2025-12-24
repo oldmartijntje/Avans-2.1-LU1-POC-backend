@@ -66,6 +66,17 @@ export class SubjectRepository implements ISubjectRepository {
         return model;
     }
 
+    async findAllDisplayTextReferences(): Promise<Array<{ title: string; description: string; moreInfo: string }>> {
+        return await this.subjectModel
+            .find({}, { title: 1, description: 1, moreInfo: 1 })
+            .exec()
+            .then(docs => docs.map(doc => ({
+                title: doc.title?.toString() || '',
+                description: doc.description?.toString() || '',
+                moreInfo: doc.moreInfo?.toString() || ''
+            })));
+    }
+
     async create(subject: SubjectEntity): Promise<any> {
         const persistenceData = SubjectMapper.toPersistence(subject);
         const newSubject = new this.subjectModel({
@@ -128,5 +139,30 @@ export class SubjectRepository implements ISubjectRepository {
         }
         // Return proper message object instead of boolean
         return { message: 'Subject deleted successfully' };
+    }
+
+    async findByIds(ids: string[]): Promise<any[]> {
+        // Convert string IDs to ObjectIds and query
+        return await this.subjectModel
+            .find({ _id: { $in: ids } })
+            .populate('description')
+            .populate('title')
+            .populate('moreInfo')
+            .populate('tags')
+            .exec();
+    }
+
+    async findByUuid(uuid: string): Promise<any> {
+        return await this.subjectModel.findOne({ uuid }).exec();
+    }
+
+    async findByTagIds(tagIds: string[]): Promise<any[]> {
+        return await this.subjectModel
+            .find({ tags: { $in: tagIds } })
+            .populate('description')
+            .populate('title')
+            .populate('moreInfo')
+            .populate('tags')
+            .exec();
     }
 }
