@@ -14,17 +14,22 @@ export class LoginUseCase {
 
     async execute(username: string, password: string): Promise<{ access_token: string }> {
         const user = await this.userRepository.findByUsernameForAuth(username);
-        
-        // Ensure user has a password and compare with bcrypt
-        if (!user || !(user as any).password) {
+
+        // Ensure user exists and has a password
+        if (!user || !user.hasPassword()) {
             throw new UnauthorizedException();
         }
-        
-        const match = await bcrypt.compare(password, (user as any).password);
+
+        const userPassword = user.getPassword();
+        if (!userPassword) {
+            throw new UnauthorizedException();
+        }
+
+        const match = await bcrypt.compare(password, userPassword);
         if (!match) {
             throw new UnauthorizedException();
         }
-        
+
         const payload = { sub: user.uuid, username: user.username };
         return {
             access_token: await this.jwtService.signAsync(payload),

@@ -20,6 +20,10 @@ export class User {
         return !!this._password;
     }
 
+    getPassword(): string | undefined {
+        return this._password;
+    }
+
     isAdmin(): boolean {
         return this.role === UserRole.ADMIN;
     }
