@@ -79,6 +79,9 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node",
+    "setupFilesAfterEnv": [
+      "<rootDir>/../test/jest-setup.ts"
+    ],
     "transformIgnorePatterns": [
       "node_modules/(?!(uuid)/)"
     ]
