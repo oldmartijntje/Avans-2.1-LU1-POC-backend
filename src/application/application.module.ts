@@ -57,12 +57,7 @@ import {
 } from './use-cases/auth';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from '../auth/constants';
-import { TagModule } from '../tag/tag.module';
-import { DisplayTextModule } from '../display-text/display-text.module';
-import { UsersModule } from '../users/users.module';
 import { CaslModule } from '../casl/casl.module';
-import { CourseModule } from '../course/course.module';
-import { SubjectsModule } from '../subjects/subjects.module';
 
 const useCases = [
     GetUserUseCase,
@@ -118,12 +113,7 @@ const useCases = [
             secret: jwtConstants.secret,
             signOptions: { expiresIn: '1d' },
         }),
-        forwardRef(() => TagModule),
-        DisplayTextModule,
-        forwardRef(() => UsersModule),
         CaslModule,
-        forwardRef(() => CourseModule),
-        forwardRef(() => SubjectsModule),
     ],
     providers: useCases,
     exports: useCases
