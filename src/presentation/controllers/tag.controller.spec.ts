@@ -119,7 +119,6 @@ describe('TagController', () => {
 
             mockListTagsUseCase.execute.mockResolvedValue(mockTags);
 
-            // Request without user
             const anonRequest = { user: undefined };
             const result = await controller.findAll(anonRequest);
 

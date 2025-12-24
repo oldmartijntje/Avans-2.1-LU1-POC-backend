@@ -15,13 +15,11 @@ export class AddFavouriteUseCase {
     ) { }
 
     async execute(userUuid: string, subjectUuid: string): Promise<any> {
-        // Get the subject to convert UUID to _id
-        const subject = await this.subjectRepository.findByUuid(subjectUuid);
+        const subject = await this.subjectRepository.findById(subjectUuid, false);
         if (!subject) {
             throw new Error('Subject not found');
         }
 
-        // Add subject _id to user's favourites
         return await this.userRepository.addFavourite(userUuid, subject._id.toString());
     }
 }

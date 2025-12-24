@@ -19,37 +19,29 @@ export class GetRecommendedSubjectsUseCase {
     ) { }
 
     async execute(userUuid: string): Promise<any[]> {
-        // Get user - returns domain entity with studyId
         const user = await this.userRepository.findById(userUuid);
         if (!user || !user.studyId) {
             throw new BadRequestException('User or user study not found');
         }
 
-        // Get the study course with tags populated
         const study = await this.courseRepository.findById(user.studyId, true);
         if (!study || !study.tags || study.tags.length === 0) {
             return [];
         }
 
-        // Extract tag IDs from the study
         const studyTagIds = study.tags.map((tag: any) =>
             tag._id ? tag._id.toString() : tag.toString()
         );
 
-        // Find subjects that have any of these tags
         const subjects = await this.subjectRepository.findByTagIds(studyTagIds);
 
-        // Get user's favourite IDs
         const favouriteIds = await this.userRepository.getFavouriteIds(userUuid);
 
-        // Process subjects to add isFavourite and matchPercentage
         return subjects.map(subject => {
             const subjectObj = subject.toObject();
 
-            // Check if subject is in favourites
             const isFavourite = favouriteIds.includes(subjectObj._id.toString());
 
-            // Calculate match percentage
             const subjectTagIds = subjectObj.tags.map((tag: any) =>
                 tag._id ? tag._id.toString() : tag.toString()
             );
@@ -59,7 +51,7 @@ export class GetRecommendedSubjectsUseCase {
             return {
                 ...subjectObj,
                 isFavourite,
-                matchPercentage: Math.round(matchPercentage * 100) / 100, // Round to 2 decimal places
+                matchPercentage: Math.round(matchPercentage * 100) / 100,
             };
         });
     }

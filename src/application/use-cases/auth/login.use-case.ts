@@ -15,7 +15,6 @@ export class LoginUseCase {
     async execute(username: string, password: string): Promise<{ access_token: string }> {
         const user = await this.userRepository.findByUsernameForAuth(username);
 
-        // Ensure user exists and has a password
         if (!user || !user.hasPassword()) {
             throw new UnauthorizedException();
         }

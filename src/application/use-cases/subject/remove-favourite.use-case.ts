@@ -15,13 +15,11 @@ export class RemoveFavouriteUseCase {
     ) { }
 
     async execute(userUuid: string, subjectUuid: string): Promise<any> {
-        // Get the subject to convert UUID to _id
-        const subject = await this.subjectRepository.findByUuid(subjectUuid);
+        const subject = await this.subjectRepository.findById(subjectUuid, false);
         if (!subject) {
             throw new Error('Subject not found');
         }
 
-        // Remove subject _id from user's favourites
         return await this.userRepository.removeFavourite(userUuid, subject._id.toString());
     }
 }

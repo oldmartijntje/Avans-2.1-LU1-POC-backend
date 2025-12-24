@@ -30,7 +30,6 @@ export class MassUpdateUseCase {
         const results: any[] = [];
         const errors: any[] = [];
 
-        // Check permissions
         const domainUser = await this.getUserUseCase.execute(userUuid);
         const ability = this.caslAbilityFactory.createForUser(domainUser);
 
@@ -40,7 +39,6 @@ export class MassUpdateUseCase {
                 let isCreating = false;
 
                 if (!displayText) {
-                    // Check create permission
                     if (!ability.can(CaslAction.Create, { creatorUuid: userUuid } as any)) {
                         errors.push({
                             uiKey: item.uiKey,
@@ -49,7 +47,6 @@ export class MassUpdateUseCase {
                         continue;
                     }
 
-                    // Create new display text
                     displayText = await this.displayTextRepository.create({
                         uiKey: item.uiKey,
                         english: item.english,
@@ -58,7 +55,6 @@ export class MassUpdateUseCase {
                     });
                     isCreating = true;
                 } else {
-                    // Check update permission
                     if (!ability.can(CaslAction.Update, displayText)) {
                         errors.push({
                             uiKey: item.uiKey,
@@ -67,7 +63,6 @@ export class MassUpdateUseCase {
                         continue;
                     }
 
-                    // Update existing
                     displayText = await this.displayTextRepository.update(displayText.id || displayText._id?.toString(), {
                         english: item.english,
                         dutch: item.dutch

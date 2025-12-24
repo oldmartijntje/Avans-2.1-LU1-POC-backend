@@ -15,17 +15,14 @@ export class GetFavouritesUseCase {
     ) { }
 
     async execute(userUuid: string): Promise<any[]> {
-        // Get user's favourite subject IDs
         const favouriteIds = await this.userRepository.getFavouriteIds(userUuid);
 
         if (favouriteIds.length === 0) {
             return [];
         }
 
-        // Get subjects by IDs with full population
         const subjects = await this.subjectRepository.findByIds(favouriteIds);
 
-        // Set isFavourite = true for all returned subjects
         return subjects.map(subject => ({
             ...subject.toObject(),
             isFavourite: true

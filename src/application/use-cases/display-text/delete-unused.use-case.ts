@@ -25,17 +25,15 @@ export class DeleteUnusedUseCase {
     ) { }
 
     async execute(userUuid: string): Promise<{ deletedCount: number; message: string }> {
-        // Check permissions
         const domainUser = await this.getUserUseCase.execute(userUuid);
         const ability = this.caslAbilityFactory.createForUser(domainUser);
         if (!ability.can(CaslAction.Delete, DisplayText)) {
             throw new UnauthorizedException();
         }
 
-        // Find unused display texts by checking references
         const subjectRefs = await this.subjectRepository.findAllDisplayTextReferences();
         const courseRefs = await this.courseRepository.findAllDisplayTextReferences();
-        
+
         const usedIds = new Set<string>();
         for (const ref of subjectRefs) {
             if (ref.title) usedIds.add(ref.title);
@@ -59,7 +57,6 @@ export class DeleteUnusedUseCase {
             return { deletedCount: 0, message: 'No unused display texts found.' };
         }
 
-        // Delete unused display texts
         let deletedCount = 0;
         for (const id of unusedIds) {
             try {

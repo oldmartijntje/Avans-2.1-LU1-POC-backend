@@ -11,7 +11,6 @@ export class LeaveStudyUseCase {
     ) { }
 
     async execute(userUuid: string): Promise<any> {
-        // Clear user's study field
         return await this.userRepository.update(userUuid, { studyId: null });
     }
 }

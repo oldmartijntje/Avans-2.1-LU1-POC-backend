@@ -25,17 +25,14 @@ export class UpdateSubjectUseCase {
         dto: UpdateSubjectDto,
         userUuid: string,
     ): Promise<Subject> {
-        // Get existing subject for authorization
         const existingSubject = await this.subjectRepository.findById(uuid, true);
 
-        // Authorization check
         const user = await this.getUserUseCase.execute(userUuid);
         const ability = this.caslAbilityFactory.createForUser(user);
         if (!ability.can(CaslAction.Update, existingSubject)) {
             throw new UnauthorizedException();
         }
 
-        // Process tags if provided
         let newTagsArray: string[] | undefined;
         if (dto.tags) {
             newTagsArray = [];
@@ -47,7 +44,6 @@ export class UpdateSubjectUseCase {
             }
         }
 
-        // Get existing display text data
         const description = existingSubject.description as any;
         const title = existingSubject.title as any;
         const moreInfo = existingSubject.moreInfo as any;
@@ -59,7 +55,6 @@ export class UpdateSubjectUseCase {
         const moreInfoNL = dto.moreInfoNL || moreInfo?.nl;
         const moreInfoEN = dto.moreInfoEN || moreInfo?.en;
 
-        // Update display texts
         const updatedDescription =
             await this.lookupDisplayTextUseCase.execute(
                 descriptionNL,

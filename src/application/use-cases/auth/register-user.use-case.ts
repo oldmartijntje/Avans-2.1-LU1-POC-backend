@@ -19,18 +19,15 @@ export class RegisterUserUseCase {
     ) { }
 
     async execute(dto: RegisterUserDto): Promise<User> {
-        // Prevent admin registration
         if (dto.role === 'ADMIN') {
             throw new UnauthorizedException('You do not have permissions to do this.');
         }
 
-        // Ensure username is not already taken
         const usernameExists = await this.userRepository.existsByUsername(dto.username);
         if (usernameExists) {
             throw new ConflictException('Username already taken');
         }
 
-        // Create user entity with UUID
         const user = User.create({
             uuid: uuidv4(),
             username: dto.username,

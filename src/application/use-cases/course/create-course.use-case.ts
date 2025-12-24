@@ -21,14 +21,12 @@ export class CreateCourseUseCase {
     ) { }
 
     async execute(dto: AddCourseDto, userUuid: string): Promise<Course> {
-        // Authorization check
         const user = await this.getUserUseCase.execute(userUuid);
         const ability = this.caslAbilityFactory.createForUser(user);
         if (!ability.can(CaslAction.Create, Course)) {
             throw new UnauthorizedException();
         }
 
-        // Process tags
         const newTagsArray: string[] = [];
         for (const tagName of dto.tags) {
             const tag = await this.getTagByNameUseCase.execute(tagName, true);
@@ -37,7 +35,6 @@ export class CreateCourseUseCase {
             }
         }
 
-        // Create display texts
         const description = await this.lookupDisplayTextUseCase.execute(
             dto.descriptionNL,
             dto.descriptionEN,
@@ -52,7 +49,7 @@ export class CreateCourseUseCase {
         );
 
         const course = Course.create({
-            uuid: '', // Will be generated in repository
+            uuid: '',
             titleId: title?.toString() || '',
             descriptionId: description?.toString() || '',
             languages: dto.languages,

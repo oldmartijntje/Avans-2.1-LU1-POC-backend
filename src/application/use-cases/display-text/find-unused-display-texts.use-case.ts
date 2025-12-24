@@ -15,16 +15,13 @@ export class FindUnusedDisplayTextsUseCase {
     ) { }
 
     async execute() {
-        // Get all display texts without uiKey
         const items = await this.displayTextRepository.findUnused();
 
-        // Get all subjects and courses to check for references
         const subjects = await this.subjectRepository.findAllDisplayTextReferences();
         const courses = await this.courseRepository.findAllDisplayTextReferences();
 
         const usedIds = new Set();
 
-        // Check subjects for title, description, and moreInfo references
         for (const subject of subjects) {
             const text = `${subject.title} ${subject.description} ${subject.moreInfo}`;
             for (const item of items) {
@@ -34,7 +31,6 @@ export class FindUnusedDisplayTextsUseCase {
             }
         }
 
-        // Check courses for title and description references
         for (const course of courses) {
             const text = `${course.title} ${course.description}`;
             for (const item of items) {
@@ -44,7 +40,6 @@ export class FindUnusedDisplayTextsUseCase {
             }
         }
 
-        // Return only truly unused items
         return items.filter(item => !usedIds.has(item._id.toString()));
     }
 }

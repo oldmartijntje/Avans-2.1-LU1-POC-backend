@@ -15,13 +15,11 @@ export class JoinStudyUseCase {
     ) { }
 
     async execute(userUuid: string, studyUuid: string): Promise<any> {
-        // Get the course to verify it exists
         const course = await this.courseRepository.findById(studyUuid, false);
         if (!course) {
             throw new Error('Course not found');
         }
 
-        // Update user's study field with the course UUID (not _id)
         return await this.userRepository.update(userUuid, { studyId: studyUuid });
     }
 }

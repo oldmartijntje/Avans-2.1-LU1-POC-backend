@@ -21,14 +21,12 @@ export class CreateSubjectUseCase {
     ) { }
 
     async execute(dto: AddSubjectDto, userUuid: string): Promise<Subject> {
-        // Authorization check
         const user = await this.getUserUseCase.execute(userUuid);
         const ability = this.caslAbilityFactory.createForUser(user);
         if (!ability.can(CaslAction.Create, Subject)) {
             throw new UnauthorizedException();
         }
 
-        // Process tags
         const newTagsArray: string[] = [];
         for (const tagName of dto.tags) {
             const tag = await this.getTagByNameUseCase.execute(tagName, true);
@@ -37,7 +35,6 @@ export class CreateSubjectUseCase {
             }
         }
 
-        // Create display texts
         const description = await this.lookupDisplayTextUseCase.execute(
             dto.descriptionNL,
             dto.descriptionEN,
@@ -58,7 +55,7 @@ export class CreateSubjectUseCase {
         );
 
         const subject = Subject.create({
-            uuid: '', // Will be generated in repository
+            uuid: '',
             titleId: title?.toString() || '',
             descriptionId: description?.toString() || '',
             ownerUuid: userUuid,

@@ -54,7 +54,6 @@ export class UserRepository implements IUserRepository {
     }
 
     async create(user: UserEntity, password: string): Promise<UserEntity> {
-        // Check duplicates
         const existingUsername = await this.userModel.findOne({
             username: user.username
         }).exec();
@@ -69,11 +68,9 @@ export class UserRepository implements IUserRepository {
             throw new ConflictException('Email already exists');
         }
 
-        // Hash password
         const saltRounds = 10;
         const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-        // Create model
         const persistenceData = UserMapper.toPersistence(user);
         const newUser = new this.userModel({
             ...persistenceData,

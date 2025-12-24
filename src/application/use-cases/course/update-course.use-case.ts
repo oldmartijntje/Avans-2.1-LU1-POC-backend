@@ -25,17 +25,14 @@ export class UpdateCourseUseCase {
         dto: UpdateCourseDto,
         userUuid: string,
     ): Promise<Course> {
-        // Get existing course for authorization
         const existingCourse = await this.courseRepository.findById(uuid, true);
 
-        // Authorization check
         const user = await this.getUserUseCase.execute(userUuid);
         const ability = this.caslAbilityFactory.createForUser(user);
         if (!ability.can(CaslAction.Update, existingCourse)) {
             throw new UnauthorizedException();
         }
 
-        // Process tags if provided
         let newTagsArray: string[] | undefined;
         if (dto.tags) {
             newTagsArray = [];
@@ -47,7 +44,6 @@ export class UpdateCourseUseCase {
             }
         }
 
-        // Get existing display text data
         const description = existingCourse.description as any;
         const title = existingCourse.title as any;
 
@@ -56,7 +52,6 @@ export class UpdateCourseUseCase {
         const titleNL = dto.titleNL || title?.nl;
         const titleEN = dto.titleEN || title?.en;
 
-        // Update display texts
         const updatedDescription =
             await this.lookupDisplayTextUseCase.execute(
                 descriptionNL,

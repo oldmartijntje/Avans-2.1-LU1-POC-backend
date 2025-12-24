@@ -15,10 +15,8 @@ export class DeleteSubjectUseCase {
     ) { }
 
     async execute(uuid: string, userUuid: string): Promise<boolean> {
-        // Get existing subject for authorization
         const existingSubject = await this.subjectRepository.findById(uuid, false);
 
-        // Authorization check
         const user = await this.getUserUseCase.execute(userUuid);
         const ability = this.caslAbilityFactory.createForUser(user);
         if (!ability.can(CaslAction.Delete, existingSubject)) {

@@ -15,19 +15,16 @@ export class GetJoinedStudyUseCase {
     ) { }
 
     async execute(userUuid: string): Promise<any[]> {
-        // Get user - returns domain entity with studyId
         const user = await this.userRepository.findById(userUuid);
         if (!user || !user.studyId) {
             return [];
         }
 
-        // Get the course with full population
         const course = await this.courseRepository.findById(user.studyId, true);
         if (!course) {
             return [];
         }
 
-        // Return as array for API compatibility
         return [course];
     }
 }

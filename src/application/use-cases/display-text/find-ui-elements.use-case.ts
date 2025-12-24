@@ -11,9 +11,7 @@ export class FindUiElementsUseCase {
     ) { }
 
     async execute(): Promise<any[]> {
-        // Find all display texts that have a uiKey (UI elements)
         const allDisplayTexts = await this.displayTextRepository.findAll();
-        // Filter to only those with uiKey
         return allDisplayTexts.filter(dt => dt.uiKey !== undefined && dt.uiKey !== null);
     }
 }

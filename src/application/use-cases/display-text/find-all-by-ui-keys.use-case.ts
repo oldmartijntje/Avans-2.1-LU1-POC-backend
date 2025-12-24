@@ -35,7 +35,6 @@ export class FindAllByUiKeysUseCase {
                 const displayText = await this.displayTextRepository.findByUiKey(uiKey);
                 if (!displayText) {
                     if (isAdmin) {
-                        // Create new display text for admin
                         const created = await this.displayTextRepository.create({
                             dutch: uiKey + " (nieuw)",
                             english: uiKey + " (new)",

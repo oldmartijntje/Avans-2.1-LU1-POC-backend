@@ -13,7 +13,7 @@ export class CreateUserUseCase {
 
     async execute(dto: CreateUserDto): Promise<User> {
         const user = User.create({
-            uuid: '', // Will be generated in repository
+            uuid: '',
             username: dto.username,
             email: dto.email,
             role: dto.role,
