@@ -24,14 +24,6 @@ export class UserRepository implements IUserRepository {
     async findById(uuid: string): Promise<UserEntity> {
         const model = await this.userModel
             .findOne({ uuid })
-            .populate({
-                path: 'study',
-                populate: [
-                    { path: 'description' },
-                    { path: 'title' },
-                    { path: 'tags' }
-                ]
-            })
             .exec();
 
         if (!model) {

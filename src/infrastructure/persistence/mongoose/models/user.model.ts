@@ -20,8 +20,8 @@ export class User {
     @Prop()
     role: 'TEACHER' | 'STUDENT' | 'ADMIN';
 
-    @Prop({ type: Types.ObjectId, ref: 'Course', default: null })
-    study: Types.ObjectId | null;
+    @Prop({ type: String, default: null })
+    study: string | null;
 
     @Prop({ type: [{ type: Types.ObjectId, ref: 'Subject' }] })
     favourites: Types.ObjectId[];
