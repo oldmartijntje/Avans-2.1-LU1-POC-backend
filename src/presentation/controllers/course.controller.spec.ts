@@ -1,28 +1,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CourseController } from './course.controller';
-import { CourseService } from '../../course/course.service';
 import {
     GetCourseUseCase,
     ListCoursesUseCase,
     CreateCourseUseCase,
     UpdateCourseUseCase,
     DeleteCourseUseCase,
+    JoinStudyUseCase,
+    LeaveStudyUseCase,
+    GetJoinedStudyUseCase,
 } from '../../application/use-cases/course';
 
 describe('CourseController', () => {
     let controller: CourseController;
-    let courseService: CourseService;
-
-    const mockCourseService = {
-        create: jest.fn(),
-        findAll: jest.fn(),
-        findOne: jest.fn(),
-        update: jest.fn(),
-        delete: jest.fn(),
-        getStudy: jest.fn(),
-        joinStudy: jest.fn(),
-        leaveStudy: jest.fn(),
-    };
 
     const mockGetCourseUseCase = {
         execute: jest.fn(),
@@ -44,6 +34,18 @@ describe('CourseController', () => {
         execute: jest.fn(),
     };
 
+    const mockJoinStudyUseCase = {
+        execute: jest.fn(),
+    };
+
+    const mockLeaveStudyUseCase = {
+        execute: jest.fn(),
+    };
+
+    const mockGetJoinedStudyUseCase = {
+        execute: jest.fn(),
+    };
+
     const mockRequest = {
         user: { sub: 'user-uuid' },
     };
@@ -57,12 +59,13 @@ describe('CourseController', () => {
                 { provide: CreateCourseUseCase, useValue: mockCreateCourseUseCase },
                 { provide: UpdateCourseUseCase, useValue: mockUpdateCourseUseCase },
                 { provide: DeleteCourseUseCase, useValue: mockDeleteCourseUseCase },
-                { provide: CourseService, useValue: mockCourseService },
+                { provide: JoinStudyUseCase, useValue: mockJoinStudyUseCase },
+                { provide: LeaveStudyUseCase, useValue: mockLeaveStudyUseCase },
+                { provide: GetJoinedStudyUseCase, useValue: mockGetJoinedStudyUseCase },
             ],
         }).compile();
 
         controller = module.get<CourseController>(CourseController);
-        courseService = module.get<CourseService>(CourseService);
     });
 
     afterEach(() => {
@@ -147,23 +150,28 @@ describe('CourseController', () => {
 
     describe('GET /course/joined', () => {
         it('should return joined course with correct structure', async () => {
-            const mockCourse = {
-                uuid: 'course-uuid',
-                title: 'title-id',
-                description: 'description-id',
-                languages: ['nl', 'en'],
-                tags: [],
-            };
+            const mockCourse = [
+                {
+                    uuid: 'course-uuid',
+                    title: 'title-id',
+                    description: 'description-id',
+                    languages: ['nl', 'en'],
+                    tags: [],
+                }
+            ];
 
-            mockCourseService.getStudy.mockResolvedValue(mockCourse);
+            mockGetJoinedStudyUseCase.execute.mockResolvedValue(mockCourse);
 
             const result = await controller.findJoined(mockRequest);
 
-            expect(result).toHaveProperty('uuid');
-            expect(result).toHaveProperty('title');
-            expect(result).toHaveProperty('description');
-            expect(result).toHaveProperty('languages');
-            expect(result).toHaveProperty('tags');
+            expect(Array.isArray(result)).toBe(true);
+            if (result.length > 0) {
+                expect(result[0]).toHaveProperty('uuid');
+                expect(result[0]).toHaveProperty('title');
+                expect(result[0]).toHaveProperty('description');
+                expect(result[0]).toHaveProperty('languages');
+                expect(result[0]).toHaveProperty('tags');
+            }
         });
     });
 
@@ -172,12 +180,12 @@ describe('CourseController', () => {
             const courseUuid = 'course-uuid';
             const mockResponse = { success: true };
 
-            mockCourseService.joinStudy.mockResolvedValue(mockResponse);
+            mockJoinStudyUseCase.execute.mockResolvedValue(mockResponse);
 
             const result = await controller.join(courseUuid, mockRequest);
 
             expect(result).toBeDefined();
-            expect(courseService.joinStudy).toHaveBeenCalledWith('user-uuid', courseUuid);
+            expect(mockJoinStudyUseCase.execute).toHaveBeenCalledWith('user-uuid', courseUuid);
         });
     });
 
@@ -185,12 +193,12 @@ describe('CourseController', () => {
         it('should leave study and return confirmation', async () => {
             const mockResponse = { success: true };
 
-            mockCourseService.leaveStudy.mockResolvedValue(mockResponse);
+            mockLeaveStudyUseCase.execute.mockResolvedValue(mockResponse);
 
             const result = await controller.leave(mockRequest);
 
             expect(result).toBeDefined();
-            expect(courseService.leaveStudy).toHaveBeenCalledWith('user-uuid');
+            expect(mockLeaveStudyUseCase.execute).toHaveBeenCalledWith('user-uuid');
         });
     });
 

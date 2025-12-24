@@ -12,7 +12,10 @@ import {
     ListCoursesUseCase,
     CreateCourseUseCase,
     UpdateCourseUseCase,
-    DeleteCourseUseCase
+    DeleteCourseUseCase,
+    JoinStudyUseCase,
+    LeaveStudyUseCase,
+    GetJoinedStudyUseCase
 } from './use-cases/course';
 import {
     GetSubjectUseCase,
@@ -34,7 +37,11 @@ import {
     DeleteDisplayTextUseCase,
     FindUnusedDisplayTextsUseCase,
     DeleteDuplicatesUseCase,
-    LookupDisplayTextByTranslationsUseCase
+    LookupDisplayTextByTranslationsUseCase,
+    FindUiElementsUseCase,
+    FindAllByUiKeysUseCase,
+    DeleteUnusedUseCase,
+    MassUpdateUseCase
 } from './use-cases/display-text';
 import {
     ListTagsUseCase,
@@ -61,6 +68,9 @@ const useCases = [
     CreateCourseUseCase,
     UpdateCourseUseCase,
     DeleteCourseUseCase,
+    JoinStudyUseCase,
+    LeaveStudyUseCase,
+    GetJoinedStudyUseCase,
     GetSubjectUseCase,
     ListSubjectsUseCase,
     CreateSubjectUseCase,
@@ -79,6 +89,10 @@ const useCases = [
     FindUnusedDisplayTextsUseCase,
     DeleteDuplicatesUseCase,
     LookupDisplayTextByTranslationsUseCase,
+    FindUiElementsUseCase,
+    FindAllByUiKeysUseCase,
+    DeleteUnusedUseCase,
+    MassUpdateUseCase,
     ListTagsUseCase,
     GetTagUseCase,
     GetTagByNameUseCase,
