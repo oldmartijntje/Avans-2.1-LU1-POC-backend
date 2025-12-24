@@ -1,36 +1,23 @@
 
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { UsersService } from '../users/users.service';
-import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcrypt';
+import { Injectable } from '@nestjs/common';
+import { LoginUseCase } from '../application/use-cases/auth/login.use-case';
+import { GetProfileUseCase } from '../application/use-cases/auth/get-profile.use-case';
 
 @Injectable()
 export class AuthService {
     constructor(
-        private usersService: UsersService,
-        private jwtService: JwtService
+        private readonly loginUseCase: LoginUseCase,
+        private readonly getProfileUseCase: GetProfileUseCase
     ) { }
 
     async signIn(
         username: string,
         pass: string,
     ): Promise<{ access_token: string }> {
-        const user = await this.usersService.findOneByNameForAuth(username);
-        // ensure user has a password and compare with bcrypt
-        if (!user || !user.password) {
-            throw new UnauthorizedException();
-        }
-        const match = await bcrypt.compare(pass, user.password);
-        if (!match) {
-            throw new UnauthorizedException();
-        }
-        const payload = { sub: user.uuid, username: user.username };
-        return {
-            access_token: await this.jwtService.signAsync(payload),
-        };
+        return await this.loginUseCase.execute(username, pass);
     }
 
     async getProfile(userUuid: string) {
-        return this.usersService.getByUuid(userUuid, true)
+        return await this.getProfileUseCase.execute(userUuid);
     }
 }

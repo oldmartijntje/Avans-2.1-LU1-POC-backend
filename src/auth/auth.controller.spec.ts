@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { UsersService } from '../users/users.service';
+import { RegisterUserUseCase } from '../application/use-cases/auth/register-user.use-case';
 import { UnauthorizedException } from '@nestjs/common';
 import { AuthGuard } from './auth.guard';
 import { JwtService } from '@nestjs/jwt';
@@ -10,16 +10,15 @@ import { Reflector } from '@nestjs/core';
 describe('AuthController', () => {
     let controller: AuthController;
     let authService: AuthService;
-    let usersService: UsersService;
+    let registerUserUseCase: RegisterUserUseCase;
 
     const mockAuthService = {
         signIn: jest.fn(),
         getProfile: jest.fn(),
     };
 
-    const mockUsersService = {
-        create: jest.fn(),
-        findOne: jest.fn(),
+    const mockRegisterUserUseCase = {
+        execute: jest.fn(),
     };
 
     const mockJwtService = {
@@ -32,7 +31,7 @@ describe('AuthController', () => {
             controllers: [AuthController],
             providers: [
                 { provide: AuthService, useValue: mockAuthService },
-                { provide: UsersService, useValue: mockUsersService },
+                { provide: RegisterUserUseCase, useValue: mockRegisterUserUseCase },
                 { provide: JwtService, useValue: mockJwtService },
                 AuthGuard,
                 Reflector,
@@ -41,7 +40,7 @@ describe('AuthController', () => {
 
         controller = module.get<AuthController>(AuthController);
         authService = module.get<AuthService>(AuthService);
-        usersService = module.get<UsersService>(UsersService);
+        registerUserUseCase = module.get<RegisterUserUseCase>(RegisterUserUseCase);
     });
 
     afterEach(() => {
@@ -87,9 +86,9 @@ describe('AuthController', () => {
                 favourites: [],
             };
 
-            mockUsersService.create.mockResolvedValue(mockUser);
+            mockRegisterUserUseCase.execute.mockResolvedValue(mockUser);
 
-            const result = await controller.signup(createUserDto, { user: null });
+            const result = await controller.signup(createUserDto);
 
             expect(result).toEqual(mockUser);
             expect(result).toHaveProperty('uuid');
@@ -113,8 +112,12 @@ describe('AuthController', () => {
                 role: 'ADMIN' as const,
             };
 
+            mockRegisterUserUseCase.execute.mockRejectedValue(
+                new UnauthorizedException('You do not have permissions to do this.')
+            );
+
             try {
-                await controller.signup(createUserDto, { user: null });
+                await controller.signup(createUserDto);
                 fail('Expected UnauthorizedException to be thrown');
             } catch (error) {
                 expect(error).toBeInstanceOf(UnauthorizedException);

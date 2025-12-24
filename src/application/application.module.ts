@@ -50,6 +50,13 @@ import {
     CreateTagUseCase,
     DeleteTagUseCase
 } from './use-cases/tag';
+import {
+    LoginUseCase,
+    RegisterUserUseCase,
+    GetProfileUseCase
+} from './use-cases/auth';
+import { JwtModule } from '@nestjs/jwt';
+import { jwtConstants } from '../auth/constants';
 import { TagModule } from '../tag/tag.module';
 import { DisplayTextModule } from '../display-text/display-text.module';
 import { UsersModule } from '../users/users.module';
@@ -97,12 +104,20 @@ const useCases = [
     GetTagUseCase,
     GetTagByNameUseCase,
     CreateTagUseCase,
-    DeleteTagUseCase
+    DeleteTagUseCase,
+    LoginUseCase,
+    RegisterUserUseCase,
+    GetProfileUseCase
 ];
 
 @Module({
     imports: [
         PersistenceModule,
+        JwtModule.register({
+            global: true,
+            secret: jwtConstants.secret,
+            signOptions: { expiresIn: '1d' },
+        }),
         forwardRef(() => TagModule),
         DisplayTextModule,
         forwardRef(() => UsersModule),
