@@ -27,23 +27,10 @@ export class CreateCourseUseCase {
 
         const newTagsArray: string[] = dto.tags;
 
-        const description = await this.lookupDisplayTextUseCase.execute(
-            dto.descriptionNL,
-            dto.descriptionEN,
-            true,
-            userUuid,
-        );
-        const title = await this.lookupDisplayTextUseCase.execute(
-            dto.titleNL,
-            dto.titleEN,
-            true,
-            userUuid,
-        );
-
         const course = Course.create({
             uuid: '',
-            titleId: title?.toString() || '',
-            descriptionId: description?.toString() || '',
+            title: dto.title,
+            description: dto.description,
             languages: dto.languages,
             tags: newTagsArray,
         });

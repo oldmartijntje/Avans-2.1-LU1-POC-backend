@@ -129,12 +129,35 @@ export class SubjectsController {
     @Patch(':uuid')
     async update(
         @Param('uuid', new ParseUUIDPipe()) uuid: string,
-        @Body(ValidationPipe) updateSubjectDto: UpdateSubjectDto,
+        @Body(ValidationPipe) updateSubjectDto: any,
         @Request() req,
     ) {
+        // Map flat fields to nested translation object if present
+        const mappedDto = { ...updateSubjectDto };
+        if (updateSubjectDto.titleNL || updateSubjectDto.titleEN) {
+            mappedDto.title = {
+                ...(updateSubjectDto.title || {}),
+                ...(updateSubjectDto.titleNL ? { dutch: updateSubjectDto.titleNL } : {}),
+                ...(updateSubjectDto.titleEN ? { english: updateSubjectDto.titleEN } : {}),
+            };
+        }
+        if (updateSubjectDto.descriptionNL || updateSubjectDto.descriptionEN) {
+            mappedDto.description = {
+                ...(updateSubjectDto.description || {}),
+                ...(updateSubjectDto.descriptionNL ? { dutch: updateSubjectDto.descriptionNL } : {}),
+                ...(updateSubjectDto.descriptionEN ? { english: updateSubjectDto.descriptionEN } : {}),
+            };
+        }
+        if (updateSubjectDto.moreInfoNL || updateSubjectDto.moreInfoEN) {
+            mappedDto.moreInfo = {
+                ...(updateSubjectDto.moreInfo || {}),
+                ...(updateSubjectDto.moreInfoNL ? { dutch: updateSubjectDto.moreInfoNL } : {}),
+                ...(updateSubjectDto.moreInfoEN ? { english: updateSubjectDto.moreInfoEN } : {}),
+            };
+        }
         return await this.updateSubjectUseCase.execute(
             uuid,
-            updateSubjectDto,
+            mappedDto,
             req.user?.sub,
         );
     }

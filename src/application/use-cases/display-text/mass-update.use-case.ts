@@ -39,7 +39,7 @@ export class MassUpdateUseCase {
                 let isCreating = false;
 
                 if (!displayText) {
-                    if (!ability.can(CaslAction.Create, { creatorUuid: userUuid } as any)) {
+                    if (!ability.can(CaslAction.Create, {} as any)) {
                         errors.push({
                             uiKey: item.uiKey,
                             error: 'Unauthorized to create this display text.'
@@ -51,7 +51,7 @@ export class MassUpdateUseCase {
                         uiKey: item.uiKey,
                         english: item.english,
                         dutch: item.dutch,
-                        creatorUuid: userUuid
+                        // creatorUuid removed
                     });
                     isCreating = true;
                 } else {

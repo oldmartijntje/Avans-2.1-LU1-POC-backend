@@ -13,8 +13,7 @@ export class DisplayText {
     @Prop({ required: true })
     english: string;
 
-    @Prop({ required: true })
-    creatorUuid: string;
+
 
     @Prop({ unique: true, sparse: true })
     uiKey?: string;

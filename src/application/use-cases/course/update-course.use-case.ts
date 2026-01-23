@@ -36,35 +36,26 @@ export class UpdateCourseUseCase {
             newTagsArray = dto.tags;
         }
 
-        const description = existingCourse.description as any;
-        const title = existingCourse.title as any;
-
-        const descriptionNL = dto.descriptionNL || description?.nl;
-        const descriptionEN = dto.descriptionEN || description?.en;
-        const titleNL = dto.titleNL || title?.nl;
-        const titleEN = dto.titleEN || title?.en;
-
-        const updatedDescription =
-            await this.lookupDisplayTextUseCase.execute(
-                descriptionNL,
-                descriptionEN,
-                true,
-                userUuid,
-            );
-        const updatedTitle = await this.lookupDisplayTextUseCase.execute(
-            titleNL,
-            titleEN,
-            true,
-            userUuid,
-        );
-
         const updates: Partial<Course> = {};
-        if (updatedTitle) updates.titleId = updatedTitle._id?.toString() || '';
-        if (updatedDescription)
-            updates.descriptionId = updatedDescription._id?.toString() || '';
+        // Merge translation fields if partial update
+        if (dto.title) {
+            updates.title = {
+                dutch: dto.title.dutch ?? existingCourse.title.dutch,
+                english: dto.title.english ?? existingCourse.title.english,
+            };
+        }
+        if (dto.description) {
+            updates.description = {
+                dutch: dto.description.dutch ?? existingCourse.description.dutch,
+                english: dto.description.english ?? existingCourse.description.english,
+            };
+        }
         if (dto.languages) updates.languages = dto.languages;
         if (newTagsArray) updates.tags = newTagsArray;
 
+        // Debug log
+        // eslint-disable-next-line no-console
+        console.log('[UpdateCourseUseCase] updates:', JSON.stringify(updates));
         return await this.courseRepository.update(uuid, updates);
     }
 }

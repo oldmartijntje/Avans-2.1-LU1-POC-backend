@@ -7,13 +7,13 @@ export class CreateDisplayTextUseCase {
     constructor(
         @Inject(DISPLAY_TEXT_REPOSITORY)
         private readonly displayTextRepository: IDisplayTextRepository
-    ) {}
+    ) { }
 
-    async execute(dto: CreateDisplayTextDto, creatorUuid: string) {
+    async execute(dto: CreateDisplayTextDto) {
         return this.displayTextRepository.create({
             dutch: dto.dutch,
             english: dto.english,
-            creatorUuid,
+            // creatorUuid removed
             uiKey: dto.uiKey
         });
     }

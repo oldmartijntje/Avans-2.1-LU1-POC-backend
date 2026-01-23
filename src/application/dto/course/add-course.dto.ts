@@ -1,21 +1,24 @@
-import { IsString, IsNotEmpty, IsArray } from 'class-validator';
+import { IsString, IsNotEmpty, IsArray, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
+
+class TranslationDto {
+    @IsString()
+    @IsNotEmpty()
+    dutch: string;
+
+    @IsString()
+    @IsNotEmpty()
+    english: string;
+}
 
 export class AddCourseDto {
-    @IsString()
-    @IsNotEmpty()
-    titleNL: string;
+    @ValidateNested()
+    @Type(() => TranslationDto)
+    title: TranslationDto;
 
-    @IsString()
-    @IsNotEmpty()
-    titleEN: string;
-
-    @IsString()
-    @IsNotEmpty()
-    descriptionNL: string;
-
-    @IsString()
-    @IsNotEmpty()
-    descriptionEN: string;
+    @ValidateNested()
+    @Type(() => TranslationDto)
+    description: TranslationDto;
 
     @IsArray()
     @IsString({ each: true })

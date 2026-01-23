@@ -61,12 +61,8 @@ export class CourseRepository implements ICourseRepository {
         });
 
         const saved = await newCourse.save();
-        const populated = await saved.populate('description');
-        await populated.populate('title');
-        // tags are now strings, no need to populate
-
         // Return raw Mongoose document to preserve _id and __v
-        return populated;
+        return saved;
     }
 
     async update(uuid: string, data: Partial<CourseEntity>): Promise<any> {
@@ -76,16 +72,13 @@ export class CourseRepository implements ICourseRepository {
         }
 
         const updateData: any = {};
-        if (data.titleId !== undefined) updateData.title = data.titleId;
-        if (data.descriptionId !== undefined)
-            updateData.description = data.descriptionId;
+        if (data.title !== undefined) updateData.title = data.title;
+        if (data.description !== undefined) updateData.description = data.description;
         if (data.languages) updateData.languages = data.languages;
         if (data.tags) updateData.tags = data.tags;
 
         const updated = await this.courseModel
             .findOneAndUpdate({ uuid }, updateData, { new: true })
-            .populate('description')
-            .populate('title')
             .exec();
 
         if (!updated) {

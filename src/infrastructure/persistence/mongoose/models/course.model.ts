@@ -8,11 +8,28 @@ export class Course {
     @Prop()
     uuid: string;
 
-    @Prop({ type: Types.ObjectId, ref: 'DisplayText' })
-    title: Types.ObjectId;
 
-    @Prop({ type: Types.ObjectId, ref: 'DisplayText' })
-    description: Types.ObjectId;
+    @Prop({
+        type: {
+            dutch: { type: String, required: true },
+            english: { type: String, required: true },
+            _id: false
+        },
+        required: true,
+        _id: false
+    })
+    title: { dutch: string; english: string };
+
+    @Prop({
+        type: {
+            dutch: { type: String, required: true },
+            english: { type: String, required: true },
+            _id: false
+        },
+        required: true,
+        _id: false
+    })
+    description: { dutch: string; english: string };
 
     @Prop()
     languages: string[];

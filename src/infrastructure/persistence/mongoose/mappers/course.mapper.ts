@@ -7,8 +7,8 @@ export class CourseMapper {
 
         return CourseEntity.create({
             uuid: model.uuid,
-            titleId: model.title?.toString() || '',
-            descriptionId: model.description?.toString() || '',
+            title: model.title,
+            description: model.description,
             languages: model.languages || [],
             tags: model.tags || [],
         });
@@ -17,8 +17,8 @@ export class CourseMapper {
     static toPersistence(entity: CourseEntity): any {
         return {
             uuid: entity.uuid,
-            title: entity.titleId,
-            description: entity.descriptionId,
+            title: entity.title,
+            description: entity.description,
             languages: entity.languages,
             tags: entity.tags,
         };

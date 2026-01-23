@@ -1,27 +1,24 @@
-import {
-    IsString,
-    IsNotEmpty,
-    IsEnum,
-    IsNumber,
-    IsArray,
-} from 'class-validator';
+import { IsString, IsNotEmpty, IsEnum, IsNumber, IsArray, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
+
+class TranslationDto {
+    @IsString()
+    @IsNotEmpty()
+    dutch: string;
+
+    @IsString()
+    @IsNotEmpty()
+    english: string;
+}
 
 export class AddSubjectDto {
-    @IsString()
-    @IsNotEmpty()
-    titleNL: string;
+    @ValidateNested()
+    @Type(() => TranslationDto)
+    title: TranslationDto;
 
-    @IsString()
-    @IsNotEmpty()
-    titleEN: string;
-
-    @IsString()
-    @IsNotEmpty()
-    descriptionNL: string;
-
-    @IsString()
-    @IsNotEmpty()
-    descriptionEN: string;
+    @ValidateNested()
+    @Type(() => TranslationDto)
+    description: TranslationDto;
 
     @IsEnum(['NLQF-5', 'NLQF-6'], {
         message: 'level must be either NLQF-5 or NLQF-6',
@@ -36,13 +33,9 @@ export class AddSubjectDto {
     @IsNotEmpty({ each: true })
     languages: string[];
 
-    @IsString()
-    @IsNotEmpty()
-    moreInfoNL: string;
-
-    @IsString()
-    @IsNotEmpty()
-    moreInfoEN: string;
+    @ValidateNested()
+    @Type(() => TranslationDto)
+    moreInfo: TranslationDto;
 
     @IsArray()
     @IsString({ each: true })

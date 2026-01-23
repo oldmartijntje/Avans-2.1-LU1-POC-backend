@@ -8,14 +8,14 @@ export class LookupDisplayTextByTranslationsUseCase {
         private readonly displayTextRepository: IDisplayTextRepository
     ) { }
 
-    async execute(dutch: string, english: string, createIfNotFound: boolean, creatorUuid: string) {
+    async execute(dutch: string, english: string, createIfNotFound: boolean) {
         let displayText = await this.displayTextRepository.findByTranslations(dutch, english);
 
         if (!displayText && createIfNotFound) {
             displayText = await this.displayTextRepository.create({
                 dutch,
                 english,
-                creatorUuid
+                // creatorUuid removed
             });
         }
 

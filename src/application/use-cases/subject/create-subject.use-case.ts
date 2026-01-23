@@ -27,33 +27,14 @@ export class CreateSubjectUseCase {
 
         const newTagsArray: string[] = dto.tags;
 
-        const description = await this.lookupDisplayTextUseCase.execute(
-            dto.descriptionNL,
-            dto.descriptionEN,
-            true,
-            userUuid,
-        );
-        const title = await this.lookupDisplayTextUseCase.execute(
-            dto.titleNL,
-            dto.titleEN,
-            true,
-            userUuid,
-        );
-        const moreInfo = await this.lookupDisplayTextUseCase.execute(
-            dto.moreInfoNL,
-            dto.moreInfoEN,
-            true,
-            userUuid,
-        );
-
         const subject = Subject.create({
             uuid: '',
-            titleId: title?.toString() || '',
-            descriptionId: description?.toString() || '',
+            title: dto.title,
+            description: dto.description,
             ownerUuid: userUuid,
             level: dto.level,
             studyPoints: dto.studyPoints,
-            moreInfoId: moreInfo?._id?.toString() || '',
+            moreInfo: dto.moreInfo,
             languages: dto.languages,
             tags: newTagsArray,
         });
