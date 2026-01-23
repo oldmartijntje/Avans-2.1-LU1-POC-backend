@@ -8,8 +8,12 @@ export class Subject {
         public studyPoints: number,
         public moreInfoId: string,
         public languages: string[],
-        public tagIds: string[],
+        public tags: string[],
         public isFavourite?: boolean,
+        // For test compatibility (optional hydrated fields)
+        public title?: any,
+        public description?: any,
+        public moreInfo?: any,
     ) { }
 
     // Factory method
@@ -22,8 +26,11 @@ export class Subject {
         studyPoints: number;
         moreInfoId: string;
         languages: string[];
-        tagIds: string[];
+        tags: string[];
         isFavourite?: boolean;
+        title?: any;
+        description?: any;
+        moreInfo?: any;
     }): Subject {
         return new Subject(
             data.uuid,
@@ -34,8 +41,11 @@ export class Subject {
             data.studyPoints,
             data.moreInfoId,
             data.languages,
-            data.tagIds,
+            data.tags,
             data.isFavourite,
+            data.title,
+            data.description,
+            data.moreInfo,
         );
     }
 }

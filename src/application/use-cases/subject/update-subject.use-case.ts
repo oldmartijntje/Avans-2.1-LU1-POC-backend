@@ -3,7 +3,6 @@ import type { ISubjectRepository } from '../../../domain/repositories/subject-re
 import { SUBJECT_REPOSITORY } from '../../../domain/repositories/subject-repository.interface';
 import { Subject } from '../../../domain/entities/subject.entity';
 import { UpdateSubjectDto } from '../../dto/subject/update-subject.dto';
-import { GetTagByNameUseCase } from '../tag/get-tag-by-name.use-case';
 import { LookupDisplayTextByTranslationsUseCase } from '../display-text/lookup-by-translations.use-case';
 import { GetUserUseCase } from '../user/get-user.use-case';
 import { CaslAbilityFactory } from '../../../casl/casl-ability.factory/casl-ability.factory';
@@ -14,7 +13,6 @@ export class UpdateSubjectUseCase {
     constructor(
         @Inject(SUBJECT_REPOSITORY)
         private readonly subjectRepository: ISubjectRepository,
-        private readonly getTagByNameUseCase: GetTagByNameUseCase,
         private readonly lookupDisplayTextUseCase: LookupDisplayTextByTranslationsUseCase,
         private readonly getUserUseCase: GetUserUseCase,
         private readonly caslAbilityFactory: CaslAbilityFactory,
@@ -35,13 +33,7 @@ export class UpdateSubjectUseCase {
 
         let newTagsArray: string[] | undefined;
         if (dto.tags) {
-            newTagsArray = [];
-            for (const tagName of dto.tags) {
-                const tag = await this.getTagByNameUseCase.execute(tagName, true);
-                if (tag && tag._id) {
-                    newTagsArray.push(tag._id.toString());
-                }
-            }
+            newTagsArray = dto.tags;
         }
 
         const description = existingSubject.description as any;
@@ -83,7 +75,7 @@ export class UpdateSubjectUseCase {
         if (dto.level) updates.level = dto.level;
         if (dto.studyPoints !== undefined) updates.studyPoints = dto.studyPoints;
         if (dto.languages) updates.languages = dto.languages;
-        if (newTagsArray) updates.tagIds = newTagsArray;
+        if (newTagsArray) updates.tags = newTagsArray;
 
         return await this.subjectRepository.update(uuid, updates);
     }

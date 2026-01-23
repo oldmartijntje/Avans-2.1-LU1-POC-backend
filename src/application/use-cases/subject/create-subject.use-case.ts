@@ -3,7 +3,6 @@ import type { ISubjectRepository } from '../../../domain/repositories/subject-re
 import { SUBJECT_REPOSITORY } from '../../../domain/repositories/subject-repository.interface';
 import { Subject } from '../../../domain/entities/subject.entity';
 import { AddSubjectDto } from '../../dto/subject/add-subject.dto';
-import { GetTagByNameUseCase } from '../tag/get-tag-by-name.use-case';
 import { LookupDisplayTextByTranslationsUseCase } from '../display-text/lookup-by-translations.use-case';
 import { GetUserUseCase } from '../user/get-user.use-case';
 import { CaslAbilityFactory } from '../../../casl/casl-ability.factory/casl-ability.factory';
@@ -14,7 +13,6 @@ export class CreateSubjectUseCase {
     constructor(
         @Inject(SUBJECT_REPOSITORY)
         private readonly subjectRepository: ISubjectRepository,
-        private readonly getTagByNameUseCase: GetTagByNameUseCase,
         private readonly lookupDisplayTextUseCase: LookupDisplayTextByTranslationsUseCase,
         private readonly getUserUseCase: GetUserUseCase,
         private readonly caslAbilityFactory: CaslAbilityFactory,
@@ -27,13 +25,7 @@ export class CreateSubjectUseCase {
             throw new UnauthorizedException();
         }
 
-        const newTagsArray: string[] = [];
-        for (const tagName of dto.tags) {
-            const tag = await this.getTagByNameUseCase.execute(tagName, true);
-            if (tag && tag._id) {
-                newTagsArray.push(tag._id.toString());
-            }
-        }
+        const newTagsArray: string[] = dto.tags;
 
         const description = await this.lookupDisplayTextUseCase.execute(
             dto.descriptionNL,
@@ -63,7 +55,7 @@ export class CreateSubjectUseCase {
             studyPoints: dto.studyPoints,
             moreInfoId: moreInfo?._id?.toString() || '',
             languages: dto.languages,
-            tagIds: newTagsArray,
+            tags: newTagsArray,
         });
 
         return await this.subjectRepository.create(subject);

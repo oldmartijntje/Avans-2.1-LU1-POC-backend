@@ -18,8 +18,8 @@ export class Course {
     @Prop()
     languages: string[];
 
-    @Prop({ type: [{ type: Types.ObjectId, ref: 'Tag' }] })
-    tags: Types.ObjectId[];
+    @Prop({ type: [String] })
+    tags: { name: string; color: string }[];
 }
 
 export const CourseSchema = SchemaFactory.createForClass(Course);

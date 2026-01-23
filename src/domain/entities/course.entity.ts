@@ -4,7 +4,10 @@ export class Course {
         public titleId: string,
         public descriptionId: string,
         public languages: string[],
-        public tagIds: string[],
+        public tags: string[],
+        // For test compatibility (optional hydrated fields)
+        public title?: any,
+        public description?: any,
     ) { }
 
     // Factory method
@@ -13,14 +16,18 @@ export class Course {
         titleId: string;
         descriptionId: string;
         languages: string[];
-        tagIds: string[];
+        tags: string[];
+        title?: any;
+        description?: any;
     }): Course {
         return new Course(
             data.uuid,
             data.titleId,
             data.descriptionId,
             data.languages,
-            data.tagIds,
+            data.tags,
+            data.title,
+            data.description,
         );
     }
 }

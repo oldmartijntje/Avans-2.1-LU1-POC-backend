@@ -40,7 +40,6 @@ export class SubjectRepository implements ISubjectRepository {
             .populate('description')
             .populate('title')
             .populate('moreInfo')
-            .populate('tags')
             .exec();
     }
 
@@ -52,7 +51,6 @@ export class SubjectRepository implements ISubjectRepository {
                 .populate('description')
                 .populate('title')
                 .populate('moreInfo')
-                .populate('tags')
                 .exec();
         } else {
             model = await this.subjectModel.findOne({ uuid }).exec();
@@ -112,7 +110,7 @@ export class SubjectRepository implements ISubjectRepository {
             updateData.studyPoints = data.studyPoints;
         if (data.moreInfoId !== undefined) updateData.moreInfo = data.moreInfoId;
         if (data.languages) updateData.languages = data.languages;
-        if (data.tagIds) updateData.tags = data.tagIds;
+        if (data.tags) updateData.tags = data.tags;
         if (data.isFavourite !== undefined)
             updateData.isFavourite = data.isFavourite;
 
@@ -121,7 +119,6 @@ export class SubjectRepository implements ISubjectRepository {
             .populate('description')
             .populate('title')
             .populate('moreInfo')
-            .populate('tags')
             .exec();
 
         if (!updated) {
@@ -148,7 +145,6 @@ export class SubjectRepository implements ISubjectRepository {
             .populate('description')
             .populate('title')
             .populate('moreInfo')
-            .populate('tags')
             .exec();
     }
 
@@ -162,7 +158,6 @@ export class SubjectRepository implements ISubjectRepository {
             .populate('description')
             .populate('title')
             .populate('moreInfo')
-            .populate('tags')
             .exec();
     }
 }

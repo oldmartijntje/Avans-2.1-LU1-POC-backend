@@ -44,13 +44,6 @@ import {
     MassUpdateUseCase
 } from './use-cases/display-text';
 import {
-    ListTagsUseCase,
-    GetTagUseCase,
-    GetTagByNameUseCase,
-    CreateTagUseCase,
-    DeleteTagUseCase
-} from './use-cases/tag';
-import {
     LoginUseCase,
     RegisterUserUseCase,
     GetProfileUseCase
@@ -95,11 +88,6 @@ const useCases = [
     FindAllByUiKeysUseCase,
     DeleteUnusedUseCase,
     MassUpdateUseCase,
-    ListTagsUseCase,
-    GetTagUseCase,
-    GetTagByNameUseCase,
-    CreateTagUseCase,
-    DeleteTagUseCase,
     LoginUseCase,
     RegisterUserUseCase,
     GetProfileUseCase

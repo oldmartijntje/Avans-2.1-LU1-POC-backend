@@ -3,7 +3,6 @@ import type { ICourseRepository } from '../../../domain/repositories/course-repo
 import { COURSE_REPOSITORY } from '../../../domain/repositories/course-repository.interface';
 import { Course } from '../../../domain/entities/course.entity';
 import { UpdateCourseDto } from '../../dto/course/update-course.dto';
-import { GetTagByNameUseCase } from '../tag/get-tag-by-name.use-case';
 import { LookupDisplayTextByTranslationsUseCase } from '../display-text/lookup-by-translations.use-case';
 import { GetUserUseCase } from '../user/get-user.use-case';
 import { CaslAbilityFactory } from '../../../casl/casl-ability.factory/casl-ability.factory';
@@ -14,7 +13,6 @@ export class UpdateCourseUseCase {
     constructor(
         @Inject(COURSE_REPOSITORY)
         private readonly courseRepository: ICourseRepository,
-        private readonly getTagByNameUseCase: GetTagByNameUseCase,
         private readonly lookupDisplayTextUseCase: LookupDisplayTextByTranslationsUseCase,
         private readonly getUserUseCase: GetUserUseCase,
         private readonly caslAbilityFactory: CaslAbilityFactory,
@@ -35,13 +33,7 @@ export class UpdateCourseUseCase {
 
         let newTagsArray: string[] | undefined;
         if (dto.tags) {
-            newTagsArray = [];
-            for (const tagName of dto.tags) {
-                const tag = await this.getTagByNameUseCase.execute(tagName, true);
-                if (tag && tag._id) {
-                    newTagsArray.push(tag._id.toString());
-                }
-            }
+            newTagsArray = dto.tags;
         }
 
         const description = existingCourse.description as any;
@@ -71,7 +63,7 @@ export class UpdateCourseUseCase {
         if (updatedDescription)
             updates.descriptionId = updatedDescription._id?.toString() || '';
         if (dto.languages) updates.languages = dto.languages;
-        if (newTagsArray) updates.tagIds = newTagsArray;
+        if (newTagsArray) updates.tags = newTagsArray;
 
         return await this.courseRepository.update(uuid, updates);
     }

@@ -10,7 +10,7 @@ export class CourseMapper {
             titleId: model.title?.toString() || '',
             descriptionId: model.description?.toString() || '',
             languages: model.languages || [],
-            tagIds: model.tags?.map((t) => t.toString()) || [],
+            tags: model.tags || [],
         });
     }
 
@@ -20,7 +20,7 @@ export class CourseMapper {
             title: entity.titleId,
             description: entity.descriptionId,
             languages: entity.languages,
-            tags: entity.tagIds,
+            tags: entity.tags,
         };
     }
 

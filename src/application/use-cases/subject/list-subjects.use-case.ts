@@ -29,12 +29,7 @@ export class ListSubjectsUseCase {
         }
 
         if (tag) {
-            const tagDocument = await this.tagRepository.findByName(tag);
-            if (tagDocument && tagDocument._id) {
-                filters.tagId = tagDocument._id.toString();
-            } else {
-                return [];
-            }
+            filters.tagId = tag;
         }
 
         return await this.subjectRepository.findAll(filters);

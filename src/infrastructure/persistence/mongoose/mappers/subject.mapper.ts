@@ -14,7 +14,7 @@ export class SubjectMapper {
             studyPoints: model.studyPoints,
             moreInfoId: model.moreInfo?.toString() || '',
             languages: model.languages || [],
-            tagIds: model.tags?.map((t) => t.toString()) || [],
+            tags: model.tags || [],
             isFavourite: model.isFavourite,
         });
     }
@@ -29,7 +29,7 @@ export class SubjectMapper {
             studyPoints: entity.studyPoints,
             moreInfo: entity.moreInfoId,
             languages: entity.languages,
-            tags: entity.tagIds,
+            tags: entity.tags,
             isFavourite: entity.isFavourite,
         };
     }

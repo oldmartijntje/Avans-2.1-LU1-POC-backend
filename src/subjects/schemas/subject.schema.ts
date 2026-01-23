@@ -33,8 +33,8 @@ export class Subject {
     @Prop()
     isFavourite?: boolean;
 
-    @Prop({ type: [{ type: Types.ObjectId, ref: 'Tag' }] })
-    tags: Types.ObjectId[];
+    @Prop({ type: [String] })
+    tags: string[];
 }
 
 export const SubjectSchema = SchemaFactory.createForClass(Subject);
