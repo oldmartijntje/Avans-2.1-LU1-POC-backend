@@ -60,6 +60,10 @@ describe('API Format Validation', () => {
     let tagController: TagController;
 
     // Mock use cases for Tag
+    const mockListTagsUseCase = { execute: jest.fn() };
+    const mockGetTagUseCase = { execute: jest.fn() };
+    const mockCreateTagUseCase = { execute: jest.fn() };
+    const mockDeleteTagUseCase = { execute: jest.fn() };
 
     // Mock use cases for Course
     const mockGetCourseUseCase = { execute: jest.fn() };
@@ -102,9 +106,13 @@ describe('API Format Validation', () => {
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
-            controllers: [CourseController, SubjectsController, DisplayTextController],
+            controllers: [TagController, CourseController, SubjectsController, DisplayTextController],
             providers: [
                 // Tag providers
+                { provide: ListTagsUseCase, useValue: mockListTagsUseCase },
+                { provide: GetTagUseCase, useValue: mockGetTagUseCase },
+                { provide: CreateTagUseCase, useValue: mockCreateTagUseCase },
+                { provide: DeleteTagUseCase, useValue: mockDeleteTagUseCase },
                 // Course providers
                 { provide: GetCourseUseCase, useValue: mockGetCourseUseCase },
                 { provide: ListCoursesUseCase, useValue: mockListCoursesUseCase },
@@ -145,6 +153,7 @@ describe('API Format Validation', () => {
             ],
         }).compile();
 
+        tagController = module.get<TagController>(TagController);
         courseController = module.get<CourseController>(CourseController);
         subjectsController = module.get<SubjectsController>(SubjectsController);
         displayTextController = module.get<DisplayTextController>(DisplayTextController);
@@ -254,8 +263,10 @@ describe('API Format Validation', () => {
                 if (result.tags.length > 0) {
                     result.tags.forEach(tag => {
                         expect(typeof tag).toBe('object');
-                        // Only check for name/color, not _id/tagName/__v
-                        expect(tag).toHaveProperty('name');
+                        // Only check for tagName/_id/__v, not name/color
+                        expect(tag).toHaveProperty('tagName');
+                        expect(tag).toHaveProperty('_id');
+                        expect(tag).toHaveProperty('__v');
                     });
                 }
             }

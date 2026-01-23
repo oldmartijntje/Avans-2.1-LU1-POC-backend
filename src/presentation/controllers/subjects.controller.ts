@@ -113,6 +113,8 @@ export class SubjectsController {
         const s = await this.getSubjectUseCase.execute(uuid);
         if (!s) return null;
         return {
+            _id: s._id,
+            __v: s.__v,
             uuid: s.uuid,
             title: s.title,
             description: s.description,
