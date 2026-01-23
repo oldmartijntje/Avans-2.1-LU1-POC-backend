@@ -12,6 +12,8 @@ export class Subject {
         public languages: string[],
         public tags: string[],
         public isFavourite?: boolean,
+        public _id?: any,
+        public __v?: number,
     ) { }
 
     // Factory method
@@ -26,6 +28,8 @@ export class Subject {
         languages: string[];
         tags: string[];
         isFavourite?: boolean;
+        _id?: any;
+        __v?: number;
     }): Subject {
         return new Subject(
             data.uuid,
@@ -38,6 +42,8 @@ export class Subject {
             data.languages,
             data.tags,
             data.isFavourite,
+            data._id,
+            data.__v,
         );
     }
 }

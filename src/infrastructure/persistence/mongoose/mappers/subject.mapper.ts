@@ -16,6 +16,8 @@ export class SubjectMapper {
             languages: model.languages || [],
             tags: model.tags || [],
             isFavourite: model.isFavourite,
+            _id: model._id,
+            __v: model.__v,
         });
     }
 
