@@ -72,6 +72,7 @@ export class SubjectsController {
         return this.removeFavouriteUseCase.execute(req.user?.sub, uuid);
     }
 
+
     @AllowAnon()
     @Get()
     async findAll(
@@ -91,23 +92,72 @@ export class SubjectsController {
         if (level && level != 'NLQF-5' && level != 'NLQF-6') {
             throw new BadRequestException("'level' is either 'NLQF-5' or 'NLQF-6'");
         }
-        return await this.listSubjectsUseCase.execute(level, pointsFilter, tag);
+        const subjects = await this.listSubjectsUseCase.execute(level, pointsFilter, tag);
+        return subjects.map((s: any) => ({
+            uuid: s.uuid,
+            title: s.title,
+            description: s.description,
+            ownerUuid: s.ownerUuid,
+            level: s.level,
+            studyPoints: s.studyPoints,
+            moreInfo: s.moreInfo,
+            languages: s.languages,
+            tags: Array.isArray(s.tags) ? s.tags : [],
+            isFavourite: s.isFavourite,
+        }));
     }
+
 
     @Get(':uuid')
     async findOne(@Param('uuid') uuid: string) {
-        return await this.getSubjectUseCase.execute(uuid);
+        const s = await this.getSubjectUseCase.execute(uuid);
+        if (!s) return null;
+        return {
+            uuid: s.uuid,
+            title: s.title,
+            description: s.description,
+            ownerUuid: s.ownerUuid,
+            level: s.level,
+            studyPoints: s.studyPoints,
+            moreInfo: s.moreInfo,
+            languages: s.languages,
+            tags: Array.isArray(s.tags) ? s.tags : [],
+            isFavourite: s.isFavourite,
+        };
     }
 
     @Patch(':uuid')
     async update(
         @Param('uuid', new ParseUUIDPipe()) uuid: string,
-        @Body(ValidationPipe) updateSubjectDto: UpdateSubjectDto,
+        @Body(ValidationPipe) updateSubjectDto: any,
         @Request() req,
     ) {
+        // Map flat fields to nested translation object if present
+        const mappedDto = { ...updateSubjectDto };
+        if (updateSubjectDto.titleNL || updateSubjectDto.titleEN) {
+            mappedDto.title = {
+                ...(updateSubjectDto.title || {}),
+                ...(updateSubjectDto.titleNL ? { dutch: updateSubjectDto.titleNL } : {}),
+                ...(updateSubjectDto.titleEN ? { english: updateSubjectDto.titleEN } : {}),
+            };
+        }
+        if (updateSubjectDto.descriptionNL || updateSubjectDto.descriptionEN) {
+            mappedDto.description = {
+                ...(updateSubjectDto.description || {}),
+                ...(updateSubjectDto.descriptionNL ? { dutch: updateSubjectDto.descriptionNL } : {}),
+                ...(updateSubjectDto.descriptionEN ? { english: updateSubjectDto.descriptionEN } : {}),
+            };
+        }
+        if (updateSubjectDto.moreInfoNL || updateSubjectDto.moreInfoEN) {
+            mappedDto.moreInfo = {
+                ...(updateSubjectDto.moreInfo || {}),
+                ...(updateSubjectDto.moreInfoNL ? { dutch: updateSubjectDto.moreInfoNL } : {}),
+                ...(updateSubjectDto.moreInfoEN ? { english: updateSubjectDto.moreInfoEN } : {}),
+            };
+        }
         return await this.updateSubjectUseCase.execute(
             uuid,
-            updateSubjectDto,
+            mappedDto,
             req.user?.sub,
         );
     }

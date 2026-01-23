@@ -29,11 +29,9 @@ export class GetRecommendedSubjectsUseCase {
             return [];
         }
 
-        const studyTagIds = study.tags.map((tag: any) =>
-            tag._id ? tag._id.toString() : tag.toString()
-        );
+        const studyTagNames = study.tags;
 
-        const subjects = await this.subjectRepository.findByTagIds(studyTagIds);
+        const subjects = await this.subjectRepository.findByTagIds(studyTagNames);
 
         const favouriteIds = await this.userRepository.getFavouriteIds(userUuid);
 
@@ -42,11 +40,9 @@ export class GetRecommendedSubjectsUseCase {
 
             const isFavourite = favouriteIds.includes(subjectObj._id.toString());
 
-            const subjectTagIds = subjectObj.tags.map((tag: any) =>
-                tag._id ? tag._id.toString() : tag.toString()
-            );
-            const matchingTags = subjectTagIds.filter(tagId => studyTagIds.includes(tagId));
-            const matchPercentage = (matchingTags.length / studyTagIds.length) * 100;
+            const subjectTagNames = subjectObj.tags;
+            const matchingTags = subjectTagNames.filter(tagName => studyTagNames.includes(tagName));
+            const matchPercentage = (matchingTags.length / studyTagNames.length) * 100;
 
             return {
                 ...subjectObj,

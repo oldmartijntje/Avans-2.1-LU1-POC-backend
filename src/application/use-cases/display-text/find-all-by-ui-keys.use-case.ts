@@ -15,7 +15,7 @@ export interface DisplayTextResponse {
     english?: string;
     notFound?: boolean;
     _id?: any;
-    creatorUuid?: string;
+    // creatorUuid removed
 }
 
 @Injectable()
@@ -39,7 +39,7 @@ export class FindAllByUiKeysUseCase {
                             dutch: uiKey + " (nieuw)",
                             english: uiKey + " (new)",
                             uiKey: uiKey,
-                            creatorUuid: userUuid
+                            // creatorUuid removed
                         });
                         return created;
                     }

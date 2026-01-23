@@ -7,7 +7,7 @@ export class DisplayTextMapper {
             id: model._id.toString(),
             dutch: model.dutch,
             english: model.english,
-            creatorUuid: model.creatorUuid,
+            // creatorUuid removed
             uiKey: model.uiKey
         });
     }
@@ -16,7 +16,7 @@ export class DisplayTextMapper {
         return {
             dutch: domain.dutch,
             english: domain.english,
-            creatorUuid: domain.creatorUuid,
+            // creatorUuid removed
             uiKey: domain.uiKey
         };
     }

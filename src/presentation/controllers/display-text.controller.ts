@@ -63,22 +63,24 @@ export class DisplayTextController {
         } catch (e) {
             // User not found or not authenticated
         }
-        return this.getDisplayTextByUiKeyUseCase.execute(uiKey, isAdmin, req.user?.sub);
+        return this.getDisplayTextByUiKeyUseCase.execute(uiKey, isAdmin);
     }
 
     @Post()
     @AllowAnon()
     async findAll(@Body(ValidationPipe) getDisplayTextsDto: GetDisplayTextsDto, @Request() req) {
         let isAdmin = false;
+        let userUuid = "";
         try {
             const user = await this.getUserUseCase.execute(req.user?.sub);
             if (user) {
                 isAdmin = user.role === "ADMIN";
+                userUuid = user.uuid;
             }
         } catch (e) {
             // User not found or not authenticated
         }
-        return this.findAllByUiKeysUseCase.execute(getDisplayTextsDto, isAdmin, req.user?.sub);
+        return this.findAllByUiKeysUseCase.execute(getDisplayTextsDto, isAdmin, userUuid);
     }
 
     @Delete('orphans')
@@ -100,7 +102,7 @@ export class DisplayTextController {
     ) {
         if (!uiKey) throw new BadRequestException();
         // Get display text by uiKey first
-        const displayText = await this.getDisplayTextByUiKeyUseCase.execute(uiKey, false, req.user?.sub);
+        const displayText = await this.getDisplayTextByUiKeyUseCase.execute(uiKey, false);
         // Update using the ID
         return this.updateDisplayTextUseCase.execute(displayText.id, updateDisplayTextDto);
     }

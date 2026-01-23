@@ -75,12 +75,31 @@ export class CourseController {
     @Patch(':uuid')
     async update(
         @Param('uuid', new ParseUUIDPipe()) uuid: string,
-        @Body(ValidationPipe) updateCourseDto: UpdateCourseDto,
+        @Body(ValidationPipe) updateCourseDto: any,
         @Request() req,
     ) {
+        // Map flat fields to nested translation object if present
+        const mappedDto = { ...updateCourseDto };
+        if (updateCourseDto.titleNL || updateCourseDto.titleEN) {
+            mappedDto.title = {
+                ...(updateCourseDto.title || {}),
+                ...(updateCourseDto.titleNL ? { dutch: updateCourseDto.titleNL } : {}),
+                ...(updateCourseDto.titleEN ? { english: updateCourseDto.titleEN } : {}),
+            };
+        }
+        if (updateCourseDto.descriptionNL || updateCourseDto.descriptionEN) {
+            mappedDto.description = {
+                ...(updateCourseDto.description || {}),
+                ...(updateCourseDto.descriptionNL ? { dutch: updateCourseDto.descriptionNL } : {}),
+                ...(updateCourseDto.descriptionEN ? { english: updateCourseDto.descriptionEN } : {}),
+            };
+        }
+        // Debug log
+        // eslint-disable-next-line no-console
+        console.log('[PATCH /course/:uuid] mappedDto:', JSON.stringify(mappedDto));
         return await this.updateCourseUseCase.execute(
             uuid,
-            updateCourseDto,
+            mappedDto,
             req.user?.sub,
         );
     }

@@ -40,7 +40,6 @@ export class SubjectRepository implements ISubjectRepository {
             .populate('description')
             .populate('title')
             .populate('moreInfo')
-            .populate('tags')
             .exec();
     }
 
@@ -52,7 +51,6 @@ export class SubjectRepository implements ISubjectRepository {
                 .populate('description')
                 .populate('title')
                 .populate('moreInfo')
-                .populate('tags')
                 .exec();
         } else {
             model = await this.subjectModel.findOne({ uuid }).exec();
@@ -104,24 +102,17 @@ export class SubjectRepository implements ISubjectRepository {
         }
 
         const updateData: any = {};
-        if (data.titleId !== undefined) updateData.title = data.titleId;
-        if (data.descriptionId !== undefined)
-            updateData.description = data.descriptionId;
+        if (data.title !== undefined) updateData.title = data.title;
+        if (data.description !== undefined) updateData.description = data.description;
         if (data.level) updateData.level = data.level;
-        if (data.studyPoints !== undefined)
-            updateData.studyPoints = data.studyPoints;
-        if (data.moreInfoId !== undefined) updateData.moreInfo = data.moreInfoId;
+        if (data.studyPoints !== undefined) updateData.studyPoints = data.studyPoints;
+        if (data.moreInfo !== undefined) updateData.moreInfo = data.moreInfo;
         if (data.languages) updateData.languages = data.languages;
-        if (data.tagIds) updateData.tags = data.tagIds;
-        if (data.isFavourite !== undefined)
-            updateData.isFavourite = data.isFavourite;
+        if (data.tags) updateData.tags = data.tags;
+        if (data.isFavourite !== undefined) updateData.isFavourite = data.isFavourite;
 
         const updated = await this.subjectModel
             .findOneAndUpdate({ uuid }, updateData, { new: true })
-            .populate('description')
-            .populate('title')
-            .populate('moreInfo')
-            .populate('tags')
             .exec();
 
         if (!updated) {
@@ -148,7 +139,6 @@ export class SubjectRepository implements ISubjectRepository {
             .populate('description')
             .populate('title')
             .populate('moreInfo')
-            .populate('tags')
             .exec();
     }
 
@@ -162,7 +152,6 @@ export class SubjectRepository implements ISubjectRepository {
             .populate('description')
             .populate('title')
             .populate('moreInfo')
-            .populate('tags')
             .exec();
     }
 }

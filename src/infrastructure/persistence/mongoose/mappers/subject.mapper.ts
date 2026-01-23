@@ -7,14 +7,14 @@ export class SubjectMapper {
 
         return SubjectEntity.create({
             uuid: model.uuid,
-            titleId: model.title?.toString() || '',
-            descriptionId: model.description?.toString() || '',
+            title: model.title,
+            description: model.description,
             ownerUuid: model.ownerUuid,
             level: model.level,
             studyPoints: model.studyPoints,
-            moreInfoId: model.moreInfo?.toString() || '',
+            moreInfo: model.moreInfo,
             languages: model.languages || [],
-            tagIds: model.tags?.map((t) => t.toString()) || [],
+            tags: model.tags || [],
             isFavourite: model.isFavourite,
         });
     }
@@ -22,14 +22,14 @@ export class SubjectMapper {
     static toPersistence(entity: SubjectEntity): any {
         return {
             uuid: entity.uuid,
-            title: entity.titleId,
-            description: entity.descriptionId,
+            title: entity.title,
+            description: entity.description,
             ownerUuid: entity.ownerUuid,
             level: entity.level,
             studyPoints: entity.studyPoints,
-            moreInfo: entity.moreInfoId,
+            moreInfo: entity.moreInfo,
             languages: entity.languages,
-            tags: entity.tagIds,
+            tags: entity.tags,
             isFavourite: entity.isFavourite,
         };
     }

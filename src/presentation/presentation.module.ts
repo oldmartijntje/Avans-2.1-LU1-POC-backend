@@ -9,7 +9,6 @@ import { ApplicationModule } from '../application/application.module';
 @Module({
     imports: [ApplicationModule],
     controllers: [
-        TagController,
         SubjectsController,
         CourseController,
         DisplayTextController,
