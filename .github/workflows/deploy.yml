@@ -3,7 +3,7 @@ name: Build, Push, and Deploy via SSH (to portainer)
 on:
   push:
     branches:
-      - main
+      - branchname
 
 jobs:
   test:
